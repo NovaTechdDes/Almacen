@@ -1,3 +1,4 @@
 export * from "./clientes/useClientes";
-export * from "./ui/useAppTheme";
+export * from "./clientes/useMutationClientes";
 
+export * from "./ui/useAppTheme";

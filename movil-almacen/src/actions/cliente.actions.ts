@@ -11,3 +11,34 @@ export const getClientes = async (): Promise<Cliente[]> => {
     return [];
   }
 };
+
+export const postCliente = async (cliente: Cliente): Promise<boolean> => {
+  const db = await getDb();
+  try {
+    await db.runAsync(
+      `INSERT INTO clientes (denominacion, dni, telefono, direccion, localidad) VALUES (?, ?, ?, ?, ?)`,
+      [
+        cliente.denominacion,
+        cliente.dni,
+        cliente.telefono,
+        cliente.direccion,
+        cliente.localidad,
+      ],
+    );
+    return true;
+  } catch (error) {
+    console.error("Error al obtener clientes", error);
+    return false;
+  }
+};
+
+export const deleteCliente = async (id: string): Promise<boolean> => {
+  const db = await getDb();
+  try {
+    await db.runAsync(`DELETE FROM clientes WHERE id_cliente = ?`, [id]);
+    return true;
+  } catch (error) {
+    console.error("Error al eliminar cliente", error);
+    return false;
+  }
+};

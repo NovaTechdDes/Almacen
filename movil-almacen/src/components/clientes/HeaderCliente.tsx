@@ -1,8 +1,15 @@
+import { useClienteStore } from "@/src/store/cliente.store";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 
 export default function HeaderCliente() {
+  const { openModalFormulario } = useClienteStore();
+
+  const handleOpen = () => {
+    openModalFormulario();
+  };
+
   return (
     <View className="mb-6">
       <View className="flex-row justify-between items-center">
@@ -15,7 +22,10 @@ export default function HeaderCliente() {
           </Text>
         </View>
         <View className="ml-4">
-          <Pressable className="flex-row items-center bg-indigo-600 px-4 py-2.5 rounded-2xl shadow-sm active:opacity-80">
+          <Pressable
+            onPress={handleOpen}
+            className="flex-row items-center bg-indigo-600 px-4 py-2.5 rounded-2xl shadow-sm active:opacity-80"
+          >
             <Ionicons name="add" size={22} color="#fff" />
             <Text className="text-white font-bold ml-1">Nuevo Cliente</Text>
           </Pressable>

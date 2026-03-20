@@ -1,5 +1,6 @@
 import BuscadorCliente from "@/src/components/clientes/BuscadorCliente";
 import ErrorClientes from "@/src/components/clientes/ErrorClientes";
+import FormularioCliente from "@/src/components/clientes/FormularioCliente";
 import HeaderCliente from "@/src/components/clientes/HeaderCliente";
 import ListaVacia from "@/src/components/clientes/ListaVacia";
 import Loading from "@/src/components/ui/Loading";
@@ -9,7 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   useWindowDimensions,
-  View
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ClienteCard } from "../../components/ClienteCard";
@@ -18,7 +19,7 @@ import { useClienteStore } from "../../store/cliente.store";
 
 export default function ClientesScreen() {
   const { data, isLoading, error } = useClientes();
-  const { buscador } = useClienteStore();
+  const { buscador, modalFormulario } = useClienteStore();
   const { width } = useWindowDimensions();
 
   // Calcular columnas basado en el ancho (Tabet/Phone)
@@ -76,12 +77,7 @@ export default function ClientesScreen() {
                   numColumns > 1 ? { flex: 1 / numColumns } : { width: "100%" }
                 }
               >
-                <ClienteCard
-                  cliente={item}
-                  onPress={() =>
-                    console.log("Cliente seleccionado:", item.id_cliente)
-                  }
-                />
+                <ClienteCard cliente={item} />
               </View>
             )}
             keyExtractor={(item) => item.id_cliente.toString()}
@@ -89,6 +85,8 @@ export default function ClientesScreen() {
             contentContainerStyle={{ paddingBottom: 20 }}
             ListEmptyComponent={<ListaVacia />}
           />
+
+          {modalFormulario && <FormularioCliente />}
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

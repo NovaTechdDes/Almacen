@@ -1,14 +1,18 @@
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { Pressable, Text, View } from "react-native";
+import { useMutateCliente } from "../hooks";
 import { Cliente } from "../interface";
+import { mensaje } from "../utils/mensaje";
+import ToastConfirmacion from "./ui/ToastConfirmacion";
 
 interface Props {
   cliente: Cliente;
-  onPress?: () => void;
 }
 
-export const ClienteCard: React.FC<Props> = ({ cliente, onPress }) => {
+export const ClienteCard: React.FC<Props> = ({ cliente }) => {
+  const [showToast, setShowToast] = useState(false);
+  const { eliminarCliente } = useMutateCliente();
   const initials = cliente.denominacion
     ?.split(" ")
     .map((word) => word[0])
@@ -16,12 +20,38 @@ export const ClienteCard: React.FC<Props> = ({ cliente, onPress }) => {
     .substring(0, 2)
     .toUpperCase();
 
+  const handleDelete = async () => {
+    try {
+      const res = await eliminarCliente.mutateAsync(
+        cliente.id_cliente.toString(),
+      );
+      if (res) {
+        mensaje(
+          "success",
+          "Cliente eliminado",
+          "El cliente ha sido eliminado correctamente",
+        );
+      } else {
+        mensaje("error", "Error al eliminar", "No se pudo eliminar el cliente");
+      }
+    } catch (error) {
+      console.error("Error al eliminar cliente:", error);
+      mensaje(
+        "error",
+        "Error fatal",
+        "Ocurrió un error inesperado al eliminar",
+      );
+    } finally {
+      setShowToast(false);
+    }
+  };
+
+  const handleEdit = () => {
+    console.log("Editar cliente");
+  };
+
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      activeOpacity={0.7}
-      className="mb-4 overflow-hidden rounded-3xl bg-white p-5 shadow-sm dark:bg-slate-900 shadow-black/10 transition-all active:scale-[0.98]"
-    >
+    <View className="mb-4 overflow-hidden rounded-3xl bg-white p-5 shadow-sm dark:bg-slate-900 shadow-black/10 transition-all active:scale-[0.98]">
       <View className="flex-row items-center">
         {/* Avatar Section */}
         <View className="mr-5 h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-500/10">
@@ -80,12 +110,31 @@ export const ClienteCard: React.FC<Props> = ({ cliente, onPress }) => {
             )}
           </View>
         </View>
-
-        {/* Action Indicator */}
-        <View className="ml-4 h-8 w-8 items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800">
-          <Ionicons name="chevron-forward" size={18} color="#94a3b8" />
-        </View>
       </View>
-    </TouchableOpacity>
+
+      <View className="flex-row items-center gap-2 w-full mt-5">
+        <Pressable
+          onPress={handleEdit}
+          className="flex-1 bg-blue-500 px-2 py-1 rounded-lg"
+        >
+          <Text className="text-white text-sm text-center">Editar</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => setShowToast(true)}
+          className="flex-1 bg-red-500 px-2 py-1 rounded-lg"
+        >
+          <Text className="text-white text-sm text-center">Eliminar</Text>
+        </Pressable>
+      </View>
+
+      {showToast && (
+        <ToastConfirmacion
+          visible={showToast}
+          mensaje="¿Estás seguro de eliminar este cliente?"
+          onConfirm={handleDelete}
+          onCancel={() => setShowToast(false)}
+        />
+      )}
+    </View>
   );
 };

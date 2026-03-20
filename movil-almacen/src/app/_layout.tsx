@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { AppState, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 import "../../global.css";
 import { getDb } from "../db/db";
 import { setupDatabase } from "../db/migration";
@@ -44,7 +45,9 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           </Stack>
         </View>
+        <Toast />
       </QueryClientProvider>
     </SafeAreaProvider>
   );
 }
+
