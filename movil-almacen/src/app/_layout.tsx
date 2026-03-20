@@ -2,8 +2,8 @@ import { Stack } from "expo-router";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { AppState } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { AppState, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import "../../global.css";
 import { getDb } from "../db/db";
 import { setupDatabase } from "../db/migration";
@@ -29,13 +29,22 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView className="flex-1 bg-gray-50 dark:bg-slate-950">
-        <QueryClientProvider client={queryClient}>
-          <Stack>
+      <QueryClientProvider client={queryClient}>
+        <View className="flex-1 items-stretch bg-gray-50 dark:bg-slate-950">
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: {
+                backgroundColor: "transparent",
+                flex: 1,
+                width: "100%",
+              },
+            }}
+          >
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           </Stack>
-        </QueryClientProvider>
-      </SafeAreaView>
+        </View>
+      </QueryClientProvider>
     </SafeAreaProvider>
   );
 }

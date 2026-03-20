@@ -15,10 +15,4 @@ export const setupDatabase = async () => {
             localidad TEXT ,
             fecha_registro DATE DEFAULT CURRENT_DATE
         )`);
-
-  await conexion.execAsync(`
-          INSERT INTO clientes (denominacion, dni, telefono, direccion, localidad) VALUES
-          ('Juan Perez', '12345678', '123456789', 'Calle 1', 'Ciudad 1'),
-          ('Maria Lopez', '87654321', '987654321', 'Calle 2', 'Ciudad 2'),
-          ('Pedro Rodriguez', '12345678', '123456789', 'Calle 3', 'Ciudad 3')`);
 };
