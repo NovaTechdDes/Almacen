@@ -5,5 +5,6 @@ export interface Pedido {
   importe: number;
   estado: string;
   observacion: string;
-  id_vendedor: string;
+  id_vendedor?: string;
+  id_pedido?: number;
 }

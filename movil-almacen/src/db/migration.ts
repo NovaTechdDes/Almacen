@@ -44,4 +44,28 @@ export const setupDatabase = async () => {
       administrador BOOLEAN DEFAULT 0
     )
     `);
+
+  await conexion.execAsync(`
+    CREATE TABLE IF NOT EXISTS pedidos (
+      id_pedido INTEGER PRIMARY KEY AUTOINCREMENT,
+      numero INTEGER AUTOINCREMENT NOT NULL,
+      id_cliente INTEGER NOT NULL,
+      fecha DATE DEFAULT CURRENT_DATE,
+      importe REAL NOT NULL,
+      estado TEXT NOT NULL,
+      observacion TEXT,
+      FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente)
+    )
+    `);
+
+  await conexion.execAsync(`
+      CREATE TABLE IF NOT EXISTS detalle_pedido (
+        id_detalle_pedido INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_pedido INTEGER NOT NULL,
+        id_producto INTEGER NOT NULL,
+        cantidad REAL NOT NULL,
+        precio REAL NOT NULL,
+        FOREIGN KEY (id_pedido) REFERENCES pedidos(id_pedido),
+        FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
+      )`);
 };
