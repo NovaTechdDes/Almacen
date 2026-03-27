@@ -16,15 +16,41 @@ import {
 } from "react-native";
 
 export default function FormularioCliente() {
-  const { control, handleSubmit } = useForm();
-  const { closeModalFormulario } = useClienteStore();
-  const { guardarCliente } = useMutateCliente();
+  const { closeModalFormulario, setClienteSeleccionado, clienteSeleccionado } =
+    useClienteStore();
+  const { guardarCliente, actualizarCliente } = useMutateCliente();
+
+  const { control, handleSubmit } = useForm({
+    defaultValues: clienteSeleccionado || {},
+  });
   const [error, setError] = useState<boolean>(false);
 
   const onSubmit = async (data: any) => {
-    console.log(data);
     if (!data.denominacion) {
       setError(true);
+      return;
+    }
+
+    console.log(clienteSeleccionado);
+
+    if (clienteSeleccionado) {
+      console.log("actualizar");
+      const res = await actualizarCliente.mutateAsync(data);
+      console.log(res);
+      if (res) {
+        mensaje(
+          "success",
+          "Cliente actualizado",
+          "Cliente actualizado correctamente",
+        );
+        handleCloseFormulario();
+      } else {
+        mensaje(
+          "error",
+          "Error al actualizar",
+          "Error al actualizar el cliente",
+        );
+      }
       return;
     }
 
@@ -32,10 +58,15 @@ export default function FormularioCliente() {
 
     if (res) {
       mensaje("success", "Cliente guardado", "Cliente guardado correctamente");
-      closeModalFormulario();
+      handleCloseFormulario();
     } else {
       mensaje("error", "Error al guardar", "Error al guardar el cliente");
     }
+  };
+
+  const handleCloseFormulario = () => {
+    setClienteSeleccionado(null);
+    closeModalFormulario();
   };
 
   return (
@@ -64,6 +95,7 @@ export default function FormularioCliente() {
               <Pressable
                 className="rounded-full p-2 active:bg-slate-100 dark:active:bg-slate-800"
                 style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+                onPress={handleCloseFormulario}
               >
                 <Ionicons name="close" size={24} color="#94a3b8" />
               </Pressable>
@@ -231,21 +263,39 @@ export default function FormularioCliente() {
                   Cancelar
                 </Text>
               </Pressable>
-              <Pressable
-                onPress={handleSubmit(onSubmit)}
-                disabled={guardarCliente.isPending}
-                className="rounded-2xl bg-indigo-600 px-8 py-3 shadow-lg shadow-indigo-500/30 active:bg-indigo-700"
-                style={({ pressed }) => ({
-                  opacity: pressed ? 0.9 : 1,
-                  transform: [{ scale: pressed ? 0.98 : 1 }],
-                })}
-              >
-                <Text className="text-base font-bold text-white">
-                  {guardarCliente.isPending
-                    ? "Guardando..."
-                    : "Guardar Cliente"}
-                </Text>
-              </Pressable>
+              {clienteSeleccionado ? (
+                <Pressable
+                  onPress={handleSubmit(onSubmit)}
+                  disabled={actualizarCliente.isPending}
+                  className="rounded-2xl bg-indigo-600 px-8 py-3 shadow-lg shadow-indigo-500/30 active:bg-indigo-700"
+                  style={({ pressed }) => ({
+                    opacity: pressed ? 0.9 : 1,
+                    transform: [{ scale: pressed ? 0.98 : 1 }],
+                  })}
+                >
+                  <Text className="text-base font-bold text-white">
+                    {actualizarCliente.isPending
+                      ? "Actualizando..."
+                      : "Actualizar Cliente"}
+                  </Text>
+                </Pressable>
+              ) : (
+                <Pressable
+                  onPress={handleSubmit(onSubmit)}
+                  disabled={guardarCliente.isPending}
+                  className="rounded-2xl bg-indigo-600 px-8 py-3 shadow-lg shadow-indigo-500/30 active:bg-indigo-700"
+                  style={({ pressed }) => ({
+                    opacity: pressed ? 0.9 : 1,
+                    transform: [{ scale: pressed ? 0.98 : 1 }],
+                  })}
+                >
+                  <Text className="text-base font-bold text-white">
+                    {guardarCliente.isPending
+                      ? "Guardando..."
+                      : "Guardar Cliente"}
+                  </Text>
+                </Pressable>
+              )}
             </View>
           </View>
         </KeyboardAvoidingView>

@@ -32,6 +32,27 @@ export const postCliente = async (cliente: Cliente): Promise<boolean> => {
   }
 };
 
+export const startPutCliente = async (cliente: Cliente) => {
+  const db = await getDb();
+  try {
+    await db.runAsync(
+      `UPDATE clientes SET denominacion = ?, dni = ?, telefono = ?, direccion = ?, localidad = ? WHERE id_cliente = ?`,
+      [
+        cliente.denominacion,
+        cliente.dni,
+        cliente.telefono,
+        cliente.direccion,
+        cliente.localidad,
+        cliente.id_cliente,
+      ],
+    );
+    return true;
+  } catch (error) {
+    console.error("Error al actualizar cliente", error);
+    return false;
+  }
+};
+
 export const deleteCliente = async (id: string): Promise<boolean> => {
   const db = await getDb();
   try {

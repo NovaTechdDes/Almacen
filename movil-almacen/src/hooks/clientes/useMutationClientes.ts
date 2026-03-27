@@ -1,4 +1,8 @@
-import { deleteCliente, postCliente } from "@/src/actions/cliente.actions";
+import {
+  deleteCliente,
+  postCliente,
+  startPutCliente,
+} from "@/src/actions/cliente.actions";
 import { Cliente } from "@/src/interface";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -12,6 +16,13 @@ export const useMutateCliente = () => {
     },
   });
 
+  const actualizarCliente = useMutation({
+    mutationFn: (cliente: Cliente) => startPutCliente(cliente),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clientes"] });
+    },
+  });
+
   const eliminarCliente = useMutation({
     mutationFn: (id: string) => deleteCliente(id),
     onSuccess: () => {
@@ -20,6 +31,7 @@ export const useMutateCliente = () => {
   });
 
   return {
+    actualizarCliente,
     guardarCliente,
     eliminarCliente,
   };

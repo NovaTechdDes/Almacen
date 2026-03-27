@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useMutateCliente } from "../hooks";
 import { Cliente } from "../interface";
+import { useClienteStore } from "../store/cliente.store";
 import { mensaje } from "../utils/mensaje";
 import ToastConfirmacion from "./ui/ToastConfirmacion";
 
@@ -13,6 +14,8 @@ interface Props {
 export const ClienteCard: React.FC<Props> = ({ cliente }) => {
   const [showToast, setShowToast] = useState(false);
   const { eliminarCliente } = useMutateCliente();
+  const { setClienteSeleccionado, openModalFormulario } = useClienteStore();
+
   const initials = cliente.denominacion
     ?.split(" ")
     .map((word) => word[0])
@@ -47,7 +50,8 @@ export const ClienteCard: React.FC<Props> = ({ cliente }) => {
   };
 
   const handleEdit = () => {
-    console.log("Editar cliente");
+    setClienteSeleccionado(cliente);
+    openModalFormulario();
   };
 
   return (

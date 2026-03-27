@@ -35,9 +35,9 @@ export default function ClientesScreen() {
     const lowerQuery = buscador.toLowerCase();
     return data.filter(
       (cliente) =>
-        cliente.denominacion.toLowerCase().includes(lowerQuery) ||
-        cliente.dni.toLowerCase().includes(lowerQuery) ||
-        cliente.localidad.toLowerCase().includes(lowerQuery),
+        cliente?.denominacion?.toLowerCase().includes(lowerQuery) ||
+        cliente?.dni?.toLowerCase().includes(lowerQuery) ||
+        cliente?.localidad?.toLowerCase().includes(lowerQuery),
     );
   }, [data, buscador]);
 
