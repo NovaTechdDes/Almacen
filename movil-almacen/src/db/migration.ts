@@ -48,7 +48,6 @@ export const setupDatabase = async () => {
   await conexion.execAsync(`
     CREATE TABLE IF NOT EXISTS pedidos (
       id_pedido INTEGER PRIMARY KEY AUTOINCREMENT,
-      numero INTEGER AUTOINCREMENT NOT NULL,
       id_cliente INTEGER NOT NULL,
       fecha DATE DEFAULT CURRENT_DATE,
       importe REAL NOT NULL,

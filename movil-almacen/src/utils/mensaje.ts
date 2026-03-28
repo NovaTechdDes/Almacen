@@ -1,6 +1,6 @@
 import Toast from "react-native-toast-message";
 
-export const mensaje = async (type: string, text1: string, text2: string) => {
+export const mensaje = async (type: string, text1: string, text2?: string) => {
   Toast.show({
     type,
     text1,

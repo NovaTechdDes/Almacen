@@ -4,7 +4,7 @@ import { Text, View } from "react-native";
 
 export default function ListaVacia() {
   return (
-    <View className="flex-1 items-center justify-center p-10 min-h-[400px]">
+    <View className="flex-1 items-center justify-center p-10 min-h-[400px] bg-slate-100 dark:bg-slate-900/50">
       <View className="bg-slate-50 dark:bg-slate-900/50 p-10 rounded-full mb-8">
         <Ionicons name="receipt-outline" size={80} color="#94a3b8" />
       </View>
@@ -13,7 +13,7 @@ export default function ListaVacia() {
         No se encontraron pedidos
       </Text>
 
-      <Text className="text-slate-500 text-center text-lg max-w-[300px] leading-6">
+      <Text className="text-slate-500 dark:text-slate-200 text-center text-lg max-w-[300px] leading-6">
         Crea un nuevo pedido para comenzar a gestionar tus ventas.
       </Text>
     </View>

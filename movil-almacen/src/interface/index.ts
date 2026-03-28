@@ -4,3 +4,4 @@ export * from "./Pedido";
 export * from "./Producto";
 export * from "./Vendedor";
 
+export * from "./ProductoCarrito";

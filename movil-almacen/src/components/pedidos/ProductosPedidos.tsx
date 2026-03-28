@@ -1,58 +1,43 @@
 import { useProductos } from "@/src/hooks/productos/useProductos";
-import { Producto } from "@/src/interface";
+import { useProductoStore } from "@/src/store/producto.store";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import {
-  FlatList,
-  Pressable,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
-
-interface Props {
-  producto: Producto;
-}
+import { FlatList, TextInput, View } from "react-native";
+import Loading from "../ui/Loading";
+import PedidoItem from "./PedidoItem";
 
 export default function ProductosPedidos() {
-  const { data, isLoading } = useProductos();
+  const { buscador, setBuscador } = useProductoStore();
+  const { data, isLoading } = useProductos(buscador);
 
   return (
-    <View>
-      <View>
-        <Ionicons name="search" size={24} color="black" />
-        <TextInput placeholder="Buscar Productos..." />
-      </View>
-      <View>
-        <FlatList
-          data={data}
-          renderItem={({ item }) => renderItem({ producto: item })}
-          keyExtractor={(item) => item.id_producto.toString()}
+    <View className="flex-1">
+      {/* Buscador */}
+      <View className="flex-row items-center bg-white border border-slate-200 rounded-xl px-4 py-3 mb-6 shadow-sm shadow-slate-200">
+        <Ionicons name="search" size={20} color="#94a3b8" />
+        <TextInput
+          value={buscador}
+          onChangeText={setBuscador}
+          placeholder="Buscar productos..."
+          placeholderTextColor="#94a3b8"
+          className="flex-1 ml-3 text-slate-600"
         />
       </View>
+
+      {/* Grid de Productos o Loading */}
+      {isLoading ? (
+        <Loading texto="Cargando productos..." />
+      ) : (
+        <FlatList
+          data={data}
+          renderItem={({ item }) => <PedidoItem producto={item} />}
+          keyExtractor={(item) => item.id_producto.toString()}
+          numColumns={2}
+          columnWrapperStyle={{ gap: 16 }}
+          contentContainerStyle={{ gap: 16, paddingBottom: 20 }}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
     </View>
   );
 }
-
-const renderItem = ({ producto }: Props) => {
-  return (
-    <View className="flex-row items-center gap-3 p-4 border-b border-gray-100 dark:border-gray-800">
-      <View className="h-12 w-12 bg-gray-100 dark:bg-slate-800 rounded-lg items-center justify-center">
-        <Ionicons name="cube-outline" size={24} color="#64748b" />
-      </View>
-
-      <View className="flex-1">
-        <Text className="text-slate-900 dark:text-white font-medium text-base">
-          {producto.descripcion}
-        </Text>
-        <Text className="text-slate-500 text-xs">
-          Stock: {producto.stock} • ${producto.precio.toFixed(2)}
-        </Text>
-      </View>
-
-      <Pressable className="bg-blue-50 p-2 rounded-full dark:bg-blue-900/30">
-        <Ionicons name="add" size={24} color="#2563eb" />
-      </Pressable>
-    </View>
-  );
-};

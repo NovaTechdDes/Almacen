@@ -1,7 +1,7 @@
 import { getDb } from "../db/db";
 import { Producto } from "../interface";
 
-export const getProductos = async (): Promise<Producto[]> => {
+export const getProductos = async (buscador: string): Promise<Producto[]> => {
   const db = await getDb();
   try {
     const filas = (await db.getAllAsync(
@@ -19,9 +19,12 @@ export const getProductos = async (): Promise<Producto[]> => {
           )
         ) FROM precio_mayorista WHERE id_producto = p.id_producto) as precios_mayoristas
       FROM productos p
+      WHERE p.descripcion LIKE ? OR p.codigo LIKE ?
       ORDER BY p.descripcion
       LIMIT 20;`,
+      [`%${buscador}%`, `%${buscador}%`],
     )) as any[];
+
 
     return filas.map((fila) => ({
       ...fila,

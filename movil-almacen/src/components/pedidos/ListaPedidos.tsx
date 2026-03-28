@@ -1,10 +1,21 @@
+import { Pedido } from "@/src/interface";
 import React from "react";
-import { Text, View } from "react-native";
+import { FlatList, View } from "react-native";
+import PedidoCard from "./PedidoCard";
 
-export default function ListaPedidos() {
+interface Props {
+  pedidos: Pedido[];
+}
+
+export default function ListaPedidos({ pedidos }: Props) {
   return (
-    <View>
-      <Text>ListaPedidos</Text>
+    <View className="flex-1">
+      <FlatList
+        data={pedidos}
+        renderItem={({ item }) => <PedidoCard item={item} />}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+      />
     </View>
   );
 }

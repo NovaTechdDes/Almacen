@@ -5,10 +5,56 @@ export const getPedidos = async (fecha: string): Promise<Pedido[]> => {
   const db = await getDb();
   try {
     const resultado = (await db.getAllAsync(
-      `SELECT * FROM pedidos WHERE fecha = ?`,
+      `SELECT 
+        p.id_pedido,
+        p.id_cliente,
+        p.fecha,
+        p.importe,
+        p.estado,
+        p.observacion,
+
+        json_object(
+          'id_cliente', c.id_cliente,
+          'denominacion', c.denominacion
+        ) as cliente,
+
+        (
+        SELECT IFNULL(SUM(d.cantidad * d.precio), 0)
+        FROM detalle_pedido d
+        WHERE d.id_pedido = p.id_pedido
+        ) as total,
+
+        (
+          SELECT json_group_array(
+            json_object(
+              'id_detalle_pedido', d.id_detalle_pedido,
+              'cantidad', d.cantidad,
+              'precio', d.precio,
+              'subtotal', d.cantidad * d.precio,
+              'producto', json_object(
+                'id_producto', pr.id_producto,
+                'descripcion', pr.descripcion,
+                'codigo', pr.codigo
+              )
+            )
+          )
+          FROM detalle_pedido d
+          JOIN productos pr ON pr.id_producto = d.id_producto
+          WHERE d.id_pedido = p.id_pedido
+        ) as items
+
+
+       FROM pedidos p 
+       JOIN clientes c ON c.id_cliente = p.id_cliente
+       WHERE DATE(fecha) = ? `,
       [fecha],
-    )) as Pedido[];
-    return resultado;
+    )) as any[];
+
+    return resultado.map((pedido) => ({
+      ...pedido,
+      cliente: JSON.parse(pedido.cliente || "{}"),
+      items: JSON.parse(pedido.items || "[]"),
+    }));
   } catch (error) {
     console.error(error);
     return [];
@@ -26,20 +72,37 @@ export const getPedido = async (id: number): Promise<Pedido | null> => {
 
 export const startPostPedido = async (pedido: Pedido) => {
   const db = await getDb();
+
   try {
-    await db.runAsync(
-      `INSERT INTO pedidos (numero, id_cliente, fecha, importe, estado, observacion) VALUES (?, ?, ?, ?, ?, ?)`,
+    await db.execAsync("BEGIN TRANSACTION");
+    const res = await db.runAsync(
+      `INSERT INTO pedidos (id_cliente, fecha, importe, estado, observacion) VALUES (?, ?, ?, ?, ?)`,
       [
-        pedido.numero,
         pedido.id_cliente,
         pedido.fecha,
         pedido.importe,
         pedido.estado,
-        pedido.observacion,
+        pedido.observacion || "",
       ],
     );
+
+    const idPedido = res.lastInsertRowId;
+
+    for (const item of pedido.items || []) {
+      await db.runAsync(
+        `
+        INSERT INTO detalle_pedido 
+        (id_pedido, id_producto, cantidad, precio)
+        VALUES (?, ?, ?, ?)
+        `,
+        [idPedido, item.id_producto, item.cantidad, item.precio],
+      );
+    }
+
+    await db.execAsync("COMMIT");
     return true;
   } catch (error) {
+    await db.execAsync("ROLLBACK");
     console.error(error);
     return false;
   }
@@ -52,14 +115,13 @@ export const startPutPedido = async (pedido: Pedido) => {
       return false;
     }
     await db.runAsync(
-      `UPDATE pedidos SET numero = ?, id_cliente = ?, fecha = ?, importe = ?, estado = ?, observacion = ? WHERE id_pedido = ?`,
+      `UPDATE pedidos SET id_cliente = ?, fecha = ?, importe = ?, estado = ?, observacion = ? WHERE id_pedido = ?`,
       [
-        pedido.numero,
         pedido.id_cliente,
         pedido.fecha,
         pedido.importe,
         pedido.estado,
-        pedido.observacion,
+        pedido.observacion || "",
         pedido.id_pedido,
       ],
     );

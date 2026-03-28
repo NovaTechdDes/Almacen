@@ -57,3 +57,8 @@ await conexion.execAsync(`INSERT INTO precio_mayorista (id_producto, precio) VAL
 (16,1050),(17,2500),(18,1900),(19,850),(20,1150),
 (21,2200),(22,2200),(23,2900),(24,750),(25,350),
 (26,800),(27,1050),(28,2000),(29,600),(30,2500);`);
+
+await conexion.execAsync(`  INSERT INTO vendedor (denominacion, clave, administrador) VALUES
+  ('Agustin', '1234', 1),
+  ('Maria', 'abcd', 0),
+  ('Juan', 'pass123', 0);`);
