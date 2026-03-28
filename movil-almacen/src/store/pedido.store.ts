@@ -101,6 +101,7 @@ export const usePedidoStore = create<PedidoStore>((set) => ({
     set({
       items: [],
       modalOpen: false,
+      cliente: null,
       total: 0,
     }),
 }));

@@ -1,12 +1,14 @@
 import BuscadorProducto from "@/src/components/productos/BuscadorProducto";
 import ProductoItem from "@/src/components/productos/ProductoItem";
+import { useProductoStore } from "@/src/store/producto.store";
 import React from "react";
 import { FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useProductos } from "../../hooks/productos/useProductos";
 
 export default function ProductosScreen() {
-  const { data, isLoading, error } = useProductos();
+  const { buscador } = useProductoStore();
+  const { data, isLoading, error } = useProductos(buscador);
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50 dark:bg-slate-950 p-5">

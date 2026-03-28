@@ -1,3 +1,4 @@
+import { Cliente } from "./Cliente";
 import { ProductoCarrito } from "./ProductoCarrito";
 
 export interface Pedido {
@@ -10,4 +11,5 @@ export interface Pedido {
   id_pedido?: number;
 
   items?: ProductoCarrito[];
+  cliente?: Cliente;
 }

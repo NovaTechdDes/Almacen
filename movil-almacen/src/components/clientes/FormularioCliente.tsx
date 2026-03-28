@@ -253,6 +253,7 @@ export default function FormularioCliente() {
             {/* Footer Actions */}
             <View className="flex-row items-center justify-end gap-3 border-t border-slate-200 bg-white px-8 py-6 dark:border-slate-800 dark:bg-slate-950">
               <Pressable
+                onPress={handleCloseFormulario}
                 className="rounded-2xl px-6 py-3 active:bg-slate-100 dark:active:bg-slate-800"
                 style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
               >

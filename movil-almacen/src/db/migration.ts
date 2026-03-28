@@ -64,7 +64,7 @@ export const setupDatabase = async () => {
         id_producto INTEGER NOT NULL,
         cantidad REAL NOT NULL,
         precio REAL NOT NULL,
-        FOREIGN KEY (id_pedido) REFERENCES pedidos(id_pedido),
+        FOREIGN KEY (id_pedido) REFERENCES pedidos(id_pedido) ON DELETE CASCADE,
         FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
       )`);
 };
