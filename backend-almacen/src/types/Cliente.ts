@@ -9,7 +9,7 @@ export interface Cliente {
 }
 
 export interface ClienteMovil {
-  id: number;
+  id_cliente: number;
   denominacion: string;
   dni: string;
   telefono: string;

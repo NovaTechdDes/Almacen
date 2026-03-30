@@ -9,5 +9,5 @@ export interface PedidoMovil {
   id_vendedor: number;
   id_pedido: number;
 
-  items: PedidoItemMovil[];
+  items: string;
 }

@@ -11,6 +11,7 @@ export const postSincronizar = async (req: Request, res: Response) => {
     res.status(200).json({
       ok: true,
       message: 'Sincronizacion exitosa',
+      data: result,
     });
   } catch (error) {
     console.error('Error al sincronizar', error);

@@ -8,7 +8,8 @@ export const cargarPedidos = async (transaction: any, pedidos: PedidoMovil[], cl
       //Los pedidos que vienen, que van a ser pedidos nuevos, de estado PENDIENTE CARGARLOS
       pedido.estado = 'SINCRONIZADO';
 
-      const cliente = clientes.find((c) => c.id_movil === pedido.id_cliente);
+      console.log(pedidos);
+      const cliente = clientes.find((c) => c.id_cliente === pedido.id_cliente);
 
       if (!cliente) {
         console.error('Cliente no encontrado', pedido.id_cliente);
@@ -18,18 +19,25 @@ export const cargarPedidos = async (transaction: any, pedidos: PedidoMovil[], cl
       }
 
       //Insertar Pedido
-      await transaction
+      const result = await transaction
         .request()
-        .query(
-          `INSERT INTO pedidos (id_cliente, importe, estado, observacion, id_vendedor) VALUES ('${pedido.id_cliente}', '${pedido.importe}', '${pedido.estado}', '${pedido.observacion}', '${pedido.id_vendedor}')`
-        );
+        .input('id_cliente', cliente.id_movil)
+        .input('importe', pedido.importe)
+        .input('estado', pedido.estado)
+        .input('observacion', pedido.observacion)
+        .input('id_vendedor', 1).query(`
+          INSERT INTO pedidos 
+          (id_cliente, importe, estado, id_vendedor, observacion) 
+          OUTPUT INSERTED.id_pedido
+          VALUES (@id_cliente, @importe, @estado, @id_vendedor, @observacion)`);
 
       //Insertar Items del pedido
-      console.log(pedido.items);
-      for (const item of pedido.items) {
-        await transaction
-          .request()
-          .query(`INSERT INTO item_pedido (id_pedido, id_producto, cantidad, precio) VALUES ('${item.id_pedido}', '${item.id_producto}', '${item.cantidad}', '${item.precio}')`);
+
+      for (const item of JSON.parse(pedido.items)) {
+        await transaction.request().input('id_pedido', result.recordset[0].id_pedido).input('id_producto', item.producto.id_producto).input('cantidad', item.cantidad).input('precio', item.precio)
+          .query(`
+            INSERT INTO item_pedido (id_pedido, id_producto, cantidad, precio)
+            VALUES (@id_pedido, @id_producto, @cantidad, @precio)`);
       }
     }
 

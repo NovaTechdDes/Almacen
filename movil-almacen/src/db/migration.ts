@@ -4,6 +4,17 @@ export const setupDatabase = async () => {
   const conexion = await getDb();
   await conexion.execAsync("PRAGMA foreign_keys = ON");
 
+  // const result = await conexion.getFirstAsync<{ user_version: number }>(
+  //   "PRAGMA user_version",
+  // );
+
+  // if (result?.user_version === 0) {
+  //   await conexion.execAsync(`
+  //   ALTER TABLE clientes ADD COLUMN id_movil INTEGER;
+  // `);
+  //   await conexion.execAsync("PRAGMA user_version = 1");
+  // }
+
   //Primero creamos la tabla de clientes ya que un pedido tiene que depender de un cliente
   await conexion.execAsync(`
         CREATE TABLE IF NOT EXISTS clientes (
@@ -13,7 +24,8 @@ export const setupDatabase = async () => {
             telefono TEXT,
             direccion TEXT ,
             localidad TEXT ,
-            fecha_registro DATE DEFAULT CURRENT_DATE
+            fecha_registro DATE DEFAULT CURRENT_DATE,
+            id_movil INTEGER
         )`);
 
   await conexion.execAsync(`

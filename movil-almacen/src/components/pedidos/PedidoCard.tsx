@@ -43,10 +43,17 @@ export default function PedidoCard({ item }: Props) {
             <Text className="text-lg font-bold">
               Pedido: {item?.id_pedido?.toString().padStart(4, "0")}
             </Text>
-            <View className="flex-row items-center gap-2 text-sm bg-orange-300/20 px-2 py-1 rounded-full">
-              <Ionicons name="time-outline" size={16} color="#ea580c" />
-              <Text className=" text-orange-600">{item?.estado}</Text>
-            </View>
+            {item?.estado === "PENDIENTE" ? (
+              <View className="flex-row items-center gap-2 text-sm bg-orange-300/20 px-2 py-1 rounded-full">
+                <Ionicons name="time-outline" size={16} color="#ea580c" />
+                <Text className=" text-orange-600">{item?.estado}</Text>
+              </View>
+            ) : (
+              <View className="flex-row items-center gap-2 text-sm bg-green-300/20 px-2 py-1 rounded-full">
+                <Ionicons name="checkmark-outline" size={16} color="#16a34a" />
+                <Text className=" text-green-600">{item?.estado}</Text>
+              </View>
+            )}
           </View>
 
           {/* Cliente y fecha */}
@@ -73,9 +80,11 @@ export default function PedidoCard({ item }: Props) {
             </Text>
           </View>
 
-          <Pressable onPress={() => setShowToast(true)} className="ml-auto">
-            <Ionicons name="trash-outline" size={24} color="red" />
-          </Pressable>
+          {item.estado === "PENDIENTE" && (
+            <Pressable onPress={() => setShowToast(true)} className="ml-auto">
+              <Ionicons name="trash-outline" size={24} color="red" />
+            </Pressable>
+          )}
         </View>
       </View>
 
