@@ -6,7 +6,6 @@ export interface Cliente {
   direccion: string;
   localidad: string;
   fecha_registro: Date;
-  id_movil: number;
 }
 
 export interface ClienteMovil {
@@ -17,4 +16,5 @@ export interface ClienteMovil {
   direccion: string;
   localidad: string;
   fecha_registro: Date;
+  id_movil: number;
 }

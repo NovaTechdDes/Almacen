@@ -1,27 +1,32 @@
 import { pool } from '../config/db';
+import { ClienteMovil } from '../types/Cliente';
 import { PedidoMovil } from '../types/Pedido';
 import { cargarClientes, cargarPedidos } from './';
 
 export const sincronizar = async (data: any) => {
-  const { clientes, productos, pedidos } = data;
+  const { clientes, pedidos } = data;
+
+  let clientesSincronizados: ClienteMovil[] = [];
   let pedidosSincronizados: PedidoMovil[] = [];
 
+  const transaction = await pool.transaction();
+
   try {
-    const transaction = await pool.transaction();
     await transaction.begin();
 
-    if (clientes) {
-      await cargarClientes(transaction, clientes);
+    if (clientes && clientes.length > 0) {
+      clientesSincronizados = await cargarClientes(transaction, clientes);
     }
 
-    if (pedidos) {
-      pedidosSincronizados = await cargarPedidos(transaction, pedidos);
+    if (pedidos && pedidos.length > 0) {
+      pedidosSincronizados = await cargarPedidos(transaction, pedidos, clientesSincronizados);
     }
 
     await transaction.commit();
-    return pedidosSincronizados;
+    return { clientes: clientesSincronizados, pedidos: pedidosSincronizados };
   } catch (error) {
+    await transaction.rollback();
     console.error('Error al sincronizar', error);
-    return false;
+    throw new Error('No se pudo completar la sincronizacion de datos');
   }
 };

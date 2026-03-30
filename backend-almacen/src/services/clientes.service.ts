@@ -37,6 +37,7 @@ export const cargarClientes = async (transaction: any, clientes: ClienteMovil[])
           );
       }
     }
+    return clientes;
   } catch (error) {
     console.error('Error al cargar los clientes', error);
     throw error;

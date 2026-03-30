@@ -1,11 +1,22 @@
+import { ClienteMovil } from '../types/Cliente';
 import { PedidoMovil } from '../types/Pedido';
 
-export const cargarPedidos = async (transaction: any, pedidos: PedidoMovil[]) => {
+export const cargarPedidos = async (transaction: any, pedidos: PedidoMovil[], clientes: ClienteMovil[]) => {
   try {
     for (const pedido of pedidos) {
       if (pedido.estado !== 'PENDIENTE') continue;
       //Los pedidos que vienen, que van a ser pedidos nuevos, de estado PENDIENTE CARGARLOS
       pedido.estado = 'SINCRONIZADO';
+
+      const cliente = clientes.find((c) => c.id_movil === pedido.id_cliente);
+
+      if (!cliente) {
+        console.error('Cliente no encontrado', pedido.id_cliente);
+        continue;
+      } else {
+        pedido.id_cliente = cliente.id_movil;
+      }
+
       //Insertar Pedido
       await transaction
         .request()
