@@ -1,5 +1,6 @@
 import { usePedidos } from "@/src/hooks/pedidos/usePedidos";
 import { useMutateSincronizar } from "@/src/hooks/sincronizar/useMutateSincronizar";
+import { mensaje } from "@/src/utils/mensaje";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 import Buscador from "./Buscador";
@@ -9,7 +10,12 @@ export default function HeaderPedidos() {
   const { data: pedidos } = usePedidos(new Date().toISOString().split("T")[0]);
 
   const handleSincronizar = async () => {
-    await postSincronizar.mutateAsync();
+    const res = await postSincronizar.mutateAsync();
+    if (res) {
+      mensaje("success", "Sincronización exitosa");
+    } else {
+      mensaje("error", "Error al sincronizar");
+    }
   };
 
   return (
@@ -24,9 +30,11 @@ export default function HeaderPedidos() {
 
         <Pressable
           onPress={handleSincronizar}
-          className="bg-blue-500 px-5 py-2 rounded-lg items-center justify-center"
+          className={`bg-blue-500 px-5 py-2 rounded-lg items-center justify-center ${postSincronizar.isPending ? "opacity-50" : ""}`}
         >
-          <Text className="text-white">Sincronizar</Text>
+          <Text className="text-white">
+            {postSincronizar.isPending ? "Sincronizando..." : "Sincronizar"}
+          </Text>
         </Pressable>
       </View>
 

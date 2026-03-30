@@ -12,6 +12,7 @@ export default function ListaPedidos({ pedidos }: Props) {
     <View className="flex-1">
       <FlatList
         data={pedidos}
+        keyExtractor={(item) => item?.id_pedido?.toString() || ""}
         renderItem={({ item }) => <PedidoCard item={item} />}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ padding: 16, paddingBottom: 100 }}

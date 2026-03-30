@@ -5,12 +5,11 @@ export const useMutateSincronizar = () => {
   const queryClient = useQueryClient();
 
   const postSincronizar = useMutation({
-    mutationFn: async () => {
-      const res = await startPostSincronizar();
-      if (res) {
-        queryClient.invalidateQueries({ queryKey: ["clientes"] });
-        queryClient.invalidateQueries({ queryKey: ["pedidos"] });
-      }
+    mutationFn: startPostSincronizar,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clientes"] });
+      queryClient.invalidateQueries({ queryKey: ["pedidos"] });
+      queryClient.invalidateQueries({ queryKey: ["productos"] });
     },
   });
 

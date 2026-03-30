@@ -8,20 +8,19 @@ export const cargarPedidos = async (transaction: any, pedidos: PedidoMovil[], cl
       //Los pedidos que vienen, que van a ser pedidos nuevos, de estado PENDIENTE CARGARLOS
       pedido.estado = 'SINCRONIZADO';
 
-      console.log(pedidos);
       const cliente = clientes.find((c) => c.id_cliente === pedido.id_cliente);
 
       if (!cliente) {
         console.error('Cliente no encontrado', pedido.id_cliente);
         continue;
       } else {
-        pedido.id_cliente = cliente.id_movil;
+        pedido.id_cliente = cliente.id_servidor;
       }
 
       //Insertar Pedido
       const result = await transaction
         .request()
-        .input('id_cliente', cliente.id_movil)
+        .input('id_cliente', cliente.id_servidor)
         .input('importe', pedido.importe)
         .input('estado', pedido.estado)
         .input('observacion', pedido.observacion)

@@ -1,19 +1,24 @@
 import { useMutatePedidos } from "@/src/hooks/pedidos/useMutatePedido";
 import { usePedidoStore } from "@/src/store/pedido.store";
+import { useProductoStore } from "@/src/store/producto.store";
 import { mensaje } from "@/src/utils/mensaje";
-import React from "react";
+import React, { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 
 export default function TotalPedido() {
   const { clearPedido, total, items, cliente } = usePedidoStore();
+  const { setBuscador } = useProductoStore();
   const { postPedidoMutation } = useMutatePedidos();
+  const [error, setError] = useState<boolean>(false);
 
   const handleCreatePedido = async () => {
-    if (!cliente) return;
+    if (!cliente) return setError(true);
+    if (items.length === 0) return setError(true);
+
     const pedido = {
       importe: total,
       items,
-      id_cliente: Number(cliente.id_cliente),
+      id_cliente: Number(cliente?.id_cliente),
       fecha: new Date().toISOString(),
       estado: "PENDIENTE",
     };
@@ -27,6 +32,11 @@ export default function TotalPedido() {
     }
   };
 
+  const onCancel = () => {
+    clearPedido();
+    setBuscador("");
+  };
+
   return (
     <View>
       <View className="flex-row justify-between items-center mb-6">
@@ -36,12 +46,40 @@ export default function TotalPedido() {
         </Text>
       </View>
 
+      {error && !cliente && (
+        <View className="mb-4">
+          <Text className="text-red-500 font-bold">
+            Debe seleccionar un cliente
+          </Text>
+        </View>
+      )}
+
+      {error && items.length === 0 && (
+        <View className="mb-4">
+          <Text className="text-red-500 font-bold">
+            El pedido debe tener items
+          </Text>
+        </View>
+      )}
+
       <View className="flex-row gap-4">
         <Pressable
-          onPress={clearPedido}
+          onPress={onCancel}
+          style={({ pressed }) => ({
+            opacity: pressed ? 0.8 : 1,
+            transform: [{ scale: pressed ? 0.95 : 1 }],
+          })}
           className="flex-1 bg-white border border-slate-200 py-4 rounded-xl items-center shadow-sm shadow-slate-100"
         >
-          <Text className="text-slate-600 font-bold">Cancelar</Text>
+          {({ pressed }) => (
+            <Text
+              className={`font-bold ${
+                pressed ? "text-slate-400" : "text-slate-600"
+              }`}
+            >
+              Cancelar
+            </Text>
+          )}
         </Pressable>
         <Pressable
           disabled={postPedidoMutation.isPending}

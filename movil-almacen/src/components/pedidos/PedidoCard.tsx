@@ -97,8 +97,8 @@ export default function PedidoCard({ item }: Props) {
         </View>
 
         <View className="mt-5 flex-row gap-5">
-          {item?.items?.map((item) => (
-            <ProductoPedidoCard key={item.id_producto} item={item} />
+          {item?.items?.map((producto, index) => (
+            <ProductoPedidoCard key={`${producto.id_producto}-${index}`} item={producto} />
           ))}
         </View>
       </View>

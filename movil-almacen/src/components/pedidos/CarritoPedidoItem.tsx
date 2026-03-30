@@ -49,18 +49,60 @@ const CarritoPedidoItem = ({ item }: CarritoPedidoItemProps) => {
       <View className="flex-row items-center justify-between">
         {/* Controles de Cantidad */}
         <View className="flex-row items-center bg-slate-50 rounded-full px-3 py-1 border border-slate-100">
-          <Pressable className="p-1" onPress={handleSubstractItem}>
-            <Ionicons name="remove" size={18} color="#64748b" />
+          <Pressable
+            className="p-1"
+            onPress={handleSubstractItem}
+            style={({ pressed }) => ({
+              opacity: pressed ? 0.8 : 1,
+              transform: [{ scale: pressed ? 0.95 : 1 }],
+            })}
+          >
+            {({ pressed }) => (
+              <Ionicons
+                name="remove"
+                size={22}
+                color={pressed ? "#ef4444" : "#64748b"}
+                className={pressed ? "bg-[#ef4444]/10 rounded-full" : ""}
+              />
+            )}
           </Pressable>
           <Text className="mx-4 font-bold text-slate-700">{item.cantidad}</Text>
-          <Pressable className="p-1" onPress={handleAddItem}>
-            <Ionicons name="add" size={18} color="#64748b" />
+          <Pressable
+            className="p-1"
+            onPress={handleAddItem}
+            style={({ pressed }) => ({
+              opacity: pressed ? 0.8 : 1,
+              transform: [{ scale: pressed ? 0.95 : 1 }],
+            })}
+          >
+            {({ pressed }) => (
+              <Ionicons
+                name="add"
+                size={22}
+                color={pressed ? "#22c55e" : "#64748b"}
+                className={pressed ? "bg-[#22c55e]/10 rounded-full" : ""}
+              />
+            )}
           </Pressable>
         </View>
 
         <View className="flex-row items-center">
-          <Pressable className="mr-4" onPress={handleRemoveItem}>
-            <Ionicons name="trash-outline" size={18} color="#ef4444" />
+          <Pressable
+            style={({ pressed }) => ({
+              opacity: pressed ? 0.8 : 1,
+              transform: [{ scale: pressed ? 0.95 : 1 }],
+            })}
+            className="mr-4"
+            onPress={handleRemoveItem}
+          >
+            {({ pressed }) => (
+              <Ionicons
+                name="trash-outline"
+                size={22}
+                color={pressed ? "#ef4444" : "#ef4444"}
+                className={pressed ? "bg-[#ef4444]/10 rounded-full" : ""}
+              />
+            )}
           </Pressable>
           <Text className="text-blue-600 font-extrabold text-base">
             $

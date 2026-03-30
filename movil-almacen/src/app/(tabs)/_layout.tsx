@@ -63,6 +63,20 @@ const LayoutScreen = () => {
           ),
         }}
       />
+      <Tabs.Screen
+        name="sincronizar"
+        options={{
+          title: "Sincronizar",
+          headerShown: false,
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "sync" : "sync-outline"}
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
     </Tabs>
   );
 };

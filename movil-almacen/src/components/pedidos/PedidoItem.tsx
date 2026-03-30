@@ -16,29 +16,48 @@ export default function PedidoItem({ producto }: Props) {
   };
 
   return (
-    <Pressable 
+    <Pressable
       onPress={handleAddItemCarrito}
+      style={({ pressed }) => ({
+        opacity: pressed ? 0.9 : 1,
+        transform: [{ scale: pressed ? 0.98 : 1 }],
+      })}
       className="flex-1 bg-white border border-slate-100 rounded-3xl p-4 flex-row items-center shadow-sm shadow-slate-200"
     >
-      {/* Miniatura de Producto */}
-      <View className="h-20 w-20 bg-slate-50 rounded-2xl items-center justify-center mr-4">
-        <Ionicons name="cube-outline" size={32} color="#94a3b8" />
-      </View>
+      {({ pressed }) => (
+        <>
+          {/* Miniatura de Producto */}
+          <View className="h-20 w-20 bg-slate-50 rounded-2xl items-center justify-center mr-4">
+            <Ionicons name="cube-outline" size={32} color="#94a3b8" />
+          </View>
 
-      <View className="flex-1">
-        <Text numberOfLines={1} className="text-slate-800 font-bold text-sm mb-1">
-          {producto.descripcion}
-        </Text>
-        <Text className="text-slate-400 text-[10px] mb-2">Marca Genérica</Text>
-        <Text className="text-blue-600 font-extrabold text-base">
-          ${producto.precio.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
-        </Text>
-      </View>
+          <View className="flex-1">
+            <Text
+              numberOfLines={1}
+              className="text-slate-800 font-bold text-sm mb-1"
+            >
+              {producto.descripcion}
+            </Text>
+            <Text className="text-slate-400 text-[10px] mb-2">
+              Marca Genérica
+            </Text>
+            <Text className="text-blue-600 font-extrabold text-base">
+              $
+              {producto.precio.toLocaleString("es-AR", {
+                minimumFractionDigits: 2,
+              })}
+            </Text>
+          </View>
 
-      <View className="ml-2">
-        <Ionicons name="add" size={28} color="#64748b" />
-      </View>
+          <View
+            className={`ml-2 p-2 rounded-full ${
+              pressed ? "bg-slate-200  " : "bg-slate-50"
+            }`}
+          >
+            <Ionicons name="add" size={24} color="#64748b" />
+          </View>
+        </>
+      )}
     </Pressable>
   );
 }
-

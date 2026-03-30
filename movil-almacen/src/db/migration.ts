@@ -25,7 +25,7 @@ export const setupDatabase = async () => {
             direccion TEXT ,
             localidad TEXT ,
             fecha_registro DATE DEFAULT CURRENT_DATE,
-            id_movil INTEGER
+            id_servidor INTEGER UNIQUE
         )`);
 
   await conexion.execAsync(`
@@ -35,6 +35,7 @@ export const setupDatabase = async () => {
             codigo TEXT,
             precio REAL NOT NULL,
             stock REAL NOT NULL,
+            id_servidor INTEGER UNIQUE,
             fecha_registro DATE DEFAULT CURRENT_DATE
         )`);
 
@@ -53,7 +54,8 @@ export const setupDatabase = async () => {
       id_vendedor INTEGER PRIMARY KEY AUTOINCREMENT,
       denominacion TEXT NOT NULL,
       clave TEXT NOT NULL,
-      administrador BOOLEAN DEFAULT 0
+      administrador BOOLEAN DEFAULT 0,
+      id_servidor INTEGER UNIQUE
     )
     `);
 

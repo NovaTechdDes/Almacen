@@ -15,10 +15,14 @@ export default function Buscador() {
 
       <Pressable
         onPress={toggleModal}
-        className="bg-blue-500 p-2 rounded-lg flex-row items-center gap-2"
+        style={({ pressed }) => ({
+          opacity: pressed ? 0.8 : 1,
+          transform: [{ scale: pressed ? 0.95 : 1 }],
+        })}
+        className="bg-blue-600 p-3 rounded-xl flex-row items-center gap-2 shadow-lg"
       >
-        <Ionicons name="add" size={20} color="white" />
-        <Text className="text-white">Nuevo Pedido</Text>
+        <Ionicons name="add" size={22} color="white" />
+        <Text className="text-white font-semibold">Nuevo Pedido</Text>
       </Pressable>
     </View>
   );

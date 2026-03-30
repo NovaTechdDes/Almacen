@@ -16,5 +16,5 @@ export interface ClienteMovil {
   direccion: string;
   localidad: string;
   fecha_registro: Date;
-  id_movil: number;
+  id_servidor: number;
 }

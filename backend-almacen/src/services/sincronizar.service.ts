@@ -2,6 +2,7 @@ import { pool } from '../config/db';
 import { ClienteMovil } from '../types/Cliente';
 import { PedidoMovil } from '../types/Pedido';
 import { cargarClientes, cargarPedidos } from './';
+import { obtenerProductos } from './producto.service';
 
 export const sincronizar = async (data: any) => {
   const { clientes, pedidos } = data;
@@ -22,8 +23,10 @@ export const sincronizar = async (data: any) => {
       pedidosSincronizados = await cargarPedidos(transaction, pedidos, clientesSincronizados);
     }
 
+    const productos = await obtenerProductos();
+
     await transaction.commit();
-    return { clientes: clientesSincronizados, pedidos: pedidosSincronizados };
+    return { clientes: clientesSincronizados, pedidos: pedidosSincronizados, productos };
   } catch (error) {
     await transaction.rollback();
     console.error('Error al sincronizar', error);

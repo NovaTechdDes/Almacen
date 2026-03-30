@@ -19,15 +19,28 @@ export const cargarClientes = async (transaction: any, clientes: ClienteMovil[])
     for (const cliente of clientes) {
       //Buscar si hay cliente con el mismo codigo, en el servidor es  id_movil
       //Si existe se tiene que actualizar cuando la denominacion sea igual y el id sea igual
-      const clienteExistente = cliente?.id_movil ? await transaction.request().query(`SELECT * FROM clientes_mayorista WHERE id_cliente = '${cliente?.id_movil}'`) : null;
+      const clienteExistente = cliente?.id_servidor ? await transaction.request().query(`SELECT * FROM clientes_mayorista WHERE id_cliente = '${cliente?.id_servidor}'`) : null;
 
       if (clienteExistente && clienteExistente.recordset.length > 0) {
         //Actualizar cliente
-        await transaction
+        const result = await transaction
           .request()
-          .query(
-            `UPDATE clientes_mayorista SET denominacion = '${cliente.denominacion}', dni = '${cliente.dni}', telefono = '${cliente.telefono}', direccion = '${cliente.direccion}', localidad = '${cliente.localidad}' WHERE id_movil = '${cliente.id_cliente}' and denominacion = '${cliente.denominacion}'`
-          );
+          .input('denominacion', cliente.denominacion)
+          .input('dni', cliente.dni)
+          .input('telefono', cliente.telefono)
+          .input('direccion', cliente.direccion)
+          .input('localidad', cliente.localidad)
+          .input('id_servidor', cliente.id_servidor).query(`
+            UPDATE clientes_mayorista 
+            SET denominacion = @denominacion, 
+            dni = @dni, 
+            telefono = @telefono, 
+            direccion = @direccion, 
+            localidad = @localidad 
+            OUTPUT INSERTED.id_cliente
+            WHERE id_cliente = @id_servidor
+            `);
+        cliente.id_servidor = result.recordset[0].id_cliente;
       } else {
         //Insertar cliente
         const result = await transaction
@@ -36,15 +49,14 @@ export const cargarClientes = async (transaction: any, clientes: ClienteMovil[])
           .input('dni', cliente.dni)
           .input('telefono', cliente.telefono)
           .input('direccion', cliente.direccion)
-          .input('localidad', cliente.localidad)
-          .input('id_movil', cliente.id_cliente).query(`
+          .input('localidad', cliente.localidad).query(`
             INSERT INTO clientes_mayorista
             (denominacion, dni, telefono, direccion, localidad)
             OUTPUT INSERTED.id_cliente
             VALUES
             (@denominacion, @dni, @telefono, @direccion, @localidad)`);
 
-        cliente.id_movil = result.recordset[0].id_cliente;
+        cliente.id_servidor = result.recordset[0].id_cliente;
       }
     }
     return clientes;

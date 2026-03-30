@@ -6,7 +6,7 @@ export const getPedidos = async (fecha: string): Promise<Pedido[]> => {
   const db = await getDb();
   try {
     const resultado = (await db.getAllAsync(
-      `${querysGetPedidos}  WHERE DATE(fecha) = ? `,
+      `${querysGetPedidos}  WHERE DATE(fecha) = ? ORDER BY id_pedido DESC`,
       [fecha],
     )) as any[];
 
