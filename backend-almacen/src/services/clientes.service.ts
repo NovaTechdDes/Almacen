@@ -14,6 +14,18 @@ export const obtenerClientes = async () => {
   }
 };
 
+export const obtenerCliente = async (id_movil: string) => {
+  try {
+    const query = `SELECT * FROM clientes WHERE id_movil = '${id_movil}'`;
+
+    const result = await pool.request().query(query);
+    return result.recordset[0] as Cliente;
+  } catch (error) {
+    console.error('Error al obtener el cliente', error);
+    return null;
+  }
+};
+
 export const cargarClientes = async (transaction: any, clientes: ClienteMovil[]) => {
   try {
     for (const cliente of clientes) {
@@ -68,7 +80,7 @@ export const cargarClientes = async (transaction: any, clientes: ClienteMovil[])
   }
 };
 
-export const cargarCliente = async (cliente: ClienteMovil) => {
+export const cargarCliente = async (cliente: ClienteMovil, vendedor: string) => {
   try {
     const result = await pool
       .request()
@@ -79,12 +91,13 @@ export const cargarCliente = async (cliente: ClienteMovil) => {
       .input('domicilio', cliente.domicilio)
       .input('id_iva', cliente.id_iva)
       .input('id_loc', cliente.id_loc)
+      .input('id_movil', `${cliente.id_cliente}-${vendedor}`)
       .input('ctacte', cliente.ctacte).query(`
             INSERT INTO clientes
-            (denominacion, tipo_doc, documento, telefono, domicilio, id_iva, id_loc, ctacte)
+            (denominacion, tipo_doc, documento, telefono, domicilio, id_iva, id_loc, ctacte, id_movil)
             OUTPUT INSERTED.id_cliente
             VALUES
-            (@denominacion, 'TIPO_DNI', @documento, @telefono, @domicilio, 2, 1, 'Habilitada')`);
+            (@denominacion, 'TIPO_DNI', @documento, @telefono, @domicilio, 2, 1, 'Habilitada', @id_movil)`);
 
     cliente.id_servidor = result.recordset[0].id_cliente;
     return cliente;

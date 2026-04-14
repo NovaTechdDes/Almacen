@@ -8,6 +8,8 @@ export interface Cliente {
   id_iva: 2;
   id_loc: number;
   ctacte: 'Habilitada';
+  id_servidor?: number;
+  id_movil?: string;
 }
 
 export interface ClienteMovil {

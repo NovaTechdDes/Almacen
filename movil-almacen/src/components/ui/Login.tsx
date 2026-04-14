@@ -16,9 +16,10 @@ interface Props {
   visible: boolean;
   onClose: () => void;
   onConfirm: (password: string) => void;
+  error: boolean;
 }
 
-export default function Login({ visible, onClose, onConfirm }: Props) {
+export default function Login({ visible, onClose, onConfirm, error }: Props) {
   const [password, setPassword] = useState("");
 
   const handleConfirm = () => {
@@ -86,6 +87,11 @@ export default function Login({ visible, onClose, onConfirm }: Props) {
                   autoFocus
                 />
               </View>
+              {error && (
+                <Text className="text-red-500 text-sm">
+                  Contraseña incorrecta
+                </Text>
+              )}
             </View>
 
             {/* Actions */}

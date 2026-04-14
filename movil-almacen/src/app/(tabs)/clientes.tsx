@@ -59,14 +59,17 @@ export default function ClientesScreen() {
         className="flex-1 w-full"
       >
         <View className="flex-1 w-full px-4 pt-4">
-          {/* Header Section */}
-          <HeaderCliente />
-
-          {/* Search Bar */}
-          <BuscadorCliente />
-
           {/* List of Clients */}
           <FlatList
+            ListHeaderComponent={
+              <View>
+                {/* Header Section */}
+                <HeaderCliente />
+
+                {/* Search Bar */}
+                <BuscadorCliente />
+              </View>
+            }
             key={numColumns} // Forzar re-renderizado si cambian las columnas
             numColumns={numColumns}
             data={filteredClientes}
@@ -80,7 +83,7 @@ export default function ClientesScreen() {
                 <ClienteCard cliente={item} />
               </View>
             )}
-            keyExtractor={(item) => item.id_cliente.toString()}
+            keyExtractor={(item) => item?.id_cliente?.toString() ?? ""}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 20 }}
             ListEmptyComponent={<ListaVacia />}

@@ -1,48 +1,39 @@
 import { HeaderPedidos, ListaPedidos, ListaVacia } from "@/src/components";
 import ModalPedido from "@/src/components/pedidos/ModalPedido";
-import Loading from "@/src/components/ui/Loading";
 import Login from "@/src/components/ui/Login";
 import { usePedidos } from "@/src/hooks/pedidos/usePedidos";
-import { useUsers } from "@/src/hooks/users/useUsers";
-import { Vendedor } from "@/src/interface";
 import { usePedidoStore } from "@/src/store/pedido.store";
 import { useUserStore } from "@/src/store/user.store";
 import { mensaje } from "@/src/utils/mensaje";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Pedido() {
   const router = useRouter();
   const { modalOpen } = usePedidoStore();
-  const { data, isLoading } = useUsers();
+  const [error, setError] = useState(false);
 
   const { userActive, modalVisible, setModalVisible, setUserActive } =
     useUserStore();
   const { data: pedidos } = usePedidos(new Date().toISOString().split("T")[0]);
-  console.log(data);
 
-  const handleUser = (password: string) => {
-    const user = data?.find((user: Vendedor) => user.clave === password);
+  const handleUser = async (password: string) => {
+    const user = await AsyncStorage.getItem("@user_active");
+
+    console.log(user);
 
     if (user) {
-      setUserActive(user);
+      setUserActive(JSON.parse(user));
       mensaje("success", "Usuario logueado correctamente");
       setModalVisible(false);
     } else {
-      mensaje("error", "Contraseña incorrecta");
+      setError(true);
     }
   };
 
-  useEffect(() => {
-    if (data && data.length === 0) {
-      router.replace("/(tabs)/sincronizar");
-    }
-  }, [data, router]);
-
-  if (isLoading) {
-    return <Loading texto="Cargando usuarios..." />;
-  }
+  useEffect(() => {}, [router]);
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
@@ -60,6 +51,7 @@ export default function Pedido() {
           visible={!modalVisible}
           onClose={() => setModalVisible(false)}
           onConfirm={handleUser}
+          error={error}
         />
       )}
     </SafeAreaView>

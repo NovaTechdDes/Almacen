@@ -1,13 +1,13 @@
 import { pool } from '../config/db';
-import { ClienteMovil } from '../types/Cliente';
+import { Cliente, ClienteMovil } from '../types/Cliente';
 import { PedidoMovil } from '../types/Pedido';
-import { cargarClientes, cargarPedidos } from './';
+import { cargarClientes, cargarPedidos, obtenerClientes } from './';
 import { obtenerProductos } from './producto.service';
 
 export const sincronizar = async (data: any) => {
   const { clientes, pedidos } = data;
 
-  let clientesSincronizados: ClienteMovil[] = [];
+  let clientesSincronizados: ClienteMovil[] | Cliente[] = [];
   let pedidosSincronizados: PedidoMovil[] = [];
 
   const transaction = await pool.transaction();
@@ -15,12 +15,14 @@ export const sincronizar = async (data: any) => {
   try {
     await transaction.begin();
 
-    if (clientes && clientes.length > 0) {
-      clientesSincronizados = await cargarClientes(transaction, clientes);
-    }
+    // if (clientes && clientes.length > 0) {
+    //   clientesSincronizados = await cargarClientes(transaction, clientes);
+    // } else {
+    //   clientesSincronizados = await obtenerClientes();
+    // }
 
     if (pedidos && pedidos.length > 0) {
-      pedidosSincronizados = await cargarPedidos(transaction, pedidos, clientesSincronizados);
+      pedidosSincronizados = await cargarPedidos(transaction, pedidos, clientes);
     }
 
     const productos = await obtenerProductos();
