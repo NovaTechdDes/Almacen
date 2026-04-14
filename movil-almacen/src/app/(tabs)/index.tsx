@@ -20,9 +20,7 @@ export default function Pedido() {
   const { data: pedidos } = usePedidos(new Date().toISOString().split("T")[0]);
 
   const handleUser = async (password: string) => {
-    const user = await AsyncStorage.getItem("@user_active");
-
-    console.log(user);
+    const user = await AsyncStorage.getItem("@user");
 
     if (user) {
       setUserActive(JSON.parse(user));
@@ -33,7 +31,15 @@ export default function Pedido() {
     }
   };
 
-  useEffect(() => {}, [router]);
+  useEffect(() => {
+    (async () => {
+      const user = await AsyncStorage.getItem("@user");
+      console.log(user);
+      if (!user) {
+        router.replace("/(tabs)/sincronizar");
+      }
+    })();
+  }, [router]);
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">

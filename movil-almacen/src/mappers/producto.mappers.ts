@@ -5,14 +5,22 @@ interface ProductoBackEnd {
   marca: string;
   precio: number;
   cantidad: number;
+  precios_mayoristas: {
+    id_precio: number;
+    id_articulo: number;
+    cant_mayorista: number;
+    precio_mayorista: number;
+  }[];
 }
 
 export const productoMapper = (producto: ProductoBackEnd) => {
   return {
     descripcion: producto.descripcion,
     codigo: producto.codigo,
-    precio: producto.precio,
-    stock: producto.cantidad,
+    precio: producto.precio ?? 0,
+    stock: producto.cantidad ?? 0,
     id_servidor: producto.id_articulo,
+
+    precios_mayoristas: producto.precios_mayoristas,
   };
 };

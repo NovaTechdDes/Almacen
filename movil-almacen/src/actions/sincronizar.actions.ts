@@ -27,8 +27,6 @@ export const startPostSincronizar = async (): Promise<boolean> => {
       // pedidos,
     });
 
-    console.log(data);
-
     if (data.ok) {
       for (const pedido of data.data.pedidos) {
         await db.runAsync(`UPDATE pedidos SET estado = ? WHERE id_pedido = ?`, [
@@ -92,7 +90,6 @@ export const startObtenerInformacion = async () => {
 
     if (data.data.productos && data.data.productos.length > 0) {
       for (const producto of productos) {
-        console.log(producto);
         await db.runAsync(
           `INSERT INTO productos (descripcion, codigo, precio, stock, id_servidor) VALUES (?, ?, ?, ?, ?)`,
           [

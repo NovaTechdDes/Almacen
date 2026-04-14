@@ -1,6 +1,7 @@
 import Actualizar from "@/src/components/servidor/Actualizar";
 import Servidor from "@/src/components/servidor/Servidor";
 import SincronizarDatos from "@/src/components/servidor/SincronizarDatos";
+import Vendedor from "@/src/components/vendedor/Vendedor";
 import React from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -32,6 +33,13 @@ const Sincronizar = () => {
               Operaciones de Datos
             </Text>
             <SincronizarDatos />
+          </View>
+
+          <View className="mt-4">
+            <Text className="px-6 mb-2 text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+              Configuracion Vendedor
+            </Text>
+            <Vendedor />
           </View>
 
           <View className="mt-4">
