@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "tsc",
+    "build": "tsc && pnpm run copy",
+    "copy": "xcopy dist distribucion\\backend\\dist /E /I /Y && xcopy package.json distribucion\\backend\\package.json /Y",
     "start": "node dist/server.js"
   },
   "keywords": [],
@@ -14,6 +15,7 @@
   "packageManager": "pnpm@10.28.2",
   "dependencies": {
     "cors": "^2.8.6",
+    "cpy-cli": "^7.0.0",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "mssql": "^12.2.1"
@@ -21,6 +23,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/mssql": "^9.1.11",
     "@types/node": "^25.5.0",
     "nodemon": "^3.1.14",
     "ts-node-dev": "^2.0.0",

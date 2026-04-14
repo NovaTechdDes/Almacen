@@ -60,9 +60,9 @@ export const startPostSincronizar = async (): Promise<boolean> => {
 
 export const probarConexion = async () => {
   const url = await getServerUrl();
-
+  console.log(`http://${url}/test`);
   try {
-    const { data } = await axios.get(`${url}/test`, { timeout: 1000 });
+    const { data } = await axios.get(`http://${url}/test`, { timeout: 1000 });
     return data;
   } catch (error) {
     console.error(error);
@@ -76,8 +76,9 @@ export const probarConexion = async () => {
 export const startObtenerInformacion = async () => {
   const db = await getDb();
   const url = await getServerUrl();
+  console.log(`http://${url}/obtener-datos`);
   try {
-    const { data } = await axios.get(`${url}/obtener-datos`);
+    const { data } = await axios.get(`http://${url}/obtener-datos`);
 
     if (data.data.vendedores && data.data.vendedores.length > 0) {
       for (const vendedor of data.data.vendedores) {

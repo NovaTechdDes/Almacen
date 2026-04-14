@@ -1,2 +1,8 @@
 node_modules
 .env
+
+backend
+node-v24.14.1-x64.msi
+nssm.exe
+output
+dist

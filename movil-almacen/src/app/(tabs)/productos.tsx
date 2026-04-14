@@ -12,7 +12,7 @@ export default function ProductosScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50 dark:bg-slate-950 p-5">
-      <View className="mb-5 flex-row justify-between">
+      <View className="mb-5 md:flex-row justify-between">
         <View>
           <Text className="text-2xl font-bold  text-gray-900 dark:text-white">
             Productos
@@ -22,7 +22,7 @@ export default function ProductosScreen() {
           </Text>
         </View>
 
-        <View className="flex-row items-center justify-between gap-2">
+        <View className=" items-center justify-between gap-2">
           <BuscadorProducto />
         </View>
       </View>
@@ -35,7 +35,7 @@ export default function ProductosScreen() {
         data={data}
         keyExtractor={(item) => item.codigo}
         numColumns={3}
-        className="bg-gray-100 dark:bg-slate-900"
+        className=""
         contentContainerStyle={{ gap: 16, paddingBottom: 20 }}
         columnWrapperStyle={{ gap: 16 }}
         renderItem={({ item }) => <ProductoItem producto={item} />}

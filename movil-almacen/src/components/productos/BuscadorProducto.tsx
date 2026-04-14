@@ -7,12 +7,12 @@ const BuscadorProducto = () => {
   const { buscador, setBuscador } = useProductoStore();
 
   return (
-    <View className="flex-row items-center gap-2 rounded-2xl bg-white px-4 py-3 border border-gray-300 dark:border-gray-700">
+    <View className="flex-row my-2 items-center gap-2 rounded-2xl bg-white dark:bg-slate-900 px-4 py-3 border border-gray-300 dark:border-gray-700">
       <Ionicons name="search" size={24} color="#94a3b8" />
       <TextInput
         placeholder="Buscar por descripcion, marca o codigo..."
         placeholderTextColor="#94a3b8"
-        className="ml-3  text-base text-slate-900 dark:text-white"
+        className="ml-3  text-base w-[80%] text-slate-900 dark:text-white"
         value={buscador}
         onChangeText={setBuscador}
       />

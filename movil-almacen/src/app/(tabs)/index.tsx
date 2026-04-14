@@ -20,6 +20,7 @@ export default function Pedido() {
   const { userActive, modalVisible, setModalVisible, setUserActive } =
     useUserStore();
   const { data: pedidos } = usePedidos(new Date().toISOString().split("T")[0]);
+  console.log(data);
 
   const handleUser = (password: string) => {
     const user = data?.find((user: Vendedor) => user.clave === password);

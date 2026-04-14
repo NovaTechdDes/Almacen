@@ -2,9 +2,11 @@ import { useAppTheme } from "@/src/hooks";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const LayoutScreen = () => {
   const { isDark, colors } = useAppTheme();
+  const insets = useSafeAreaInsets();
   return (
     <Tabs
       screenOptions={{
@@ -13,9 +15,9 @@ const LayoutScreen = () => {
           backgroundColor: colors.card,
           borderTopColor: colors.border,
           borderTopWidth: 1,
-          height: 65,
-          paddingBottom: 8,
+          height: 60 + insets.bottom,
           elevation: 0,
+          paddingBottom: insets.bottom,
         },
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.textMuted,
