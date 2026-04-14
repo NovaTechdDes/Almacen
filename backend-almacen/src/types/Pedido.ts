@@ -1,13 +1,10 @@
-import { PedidoItemMovil } from './Items';
-
 export interface PedidoMovil {
+  num_pedido: string;
+  fecha_pedido: string;
   id_cliente: number;
-  fecha: string;
-  importe: number;
-  estado: string;
-  observacion: string;
-  id_vendedor: number;
-  id_pedido: number;
+  vendedor: string;
+  facturado: false;
+  estado: 'PENDIENTE' | 'SINCRONIZADO';
 
   items: string;
 }

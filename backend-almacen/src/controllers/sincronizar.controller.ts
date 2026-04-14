@@ -24,14 +24,13 @@ export const postSincronizar = async (req: Request, res: Response) => {
 export const getObtenerDatos = async (req: Request, res: Response) => {
   try {
     const productos = await obtenerProductos();
-    const vendedores = await obtenerVendedores();
-    if (!productos || !vendedores) {
+    if (!productos) {
       return res.status(500).json({ error: 'Error al obtener los datos' });
     }
     res.status(200).json({
       ok: true,
       message: 'Datos obtenidos exitosamente',
-      data: { productos, vendedores },
+      data: { productos },
     });
   } catch (error) {
     console.error('Error al obtener los datos', error);

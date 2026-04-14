@@ -1,20 +1,24 @@
 export interface Cliente {
   id_cliente: number;
   denominacion: string;
-  dni: string;
+  tipo_doc: 'TIPO_DNI';
+  documento: string;
   telefono: string;
-  direccion: string;
-  localidad: string;
-  fecha_registro: Date;
+  domicilio: string;
+  id_iva: 2;
+  id_loc: number;
+  ctacte: 'Habilitada';
 }
 
 export interface ClienteMovil {
   id_cliente: number;
   denominacion: string;
-  dni: string;
+  tipo_doc: 'TIPO_DNI';
+  documento: string;
   telefono: string;
-  direccion: string;
-  localidad: string;
-  fecha_registro: Date;
+  domicilio: string;
+  id_iva: 2;
+  id_loc: number;
+  ctacte: 'Habilitada';
   id_servidor: number;
 }

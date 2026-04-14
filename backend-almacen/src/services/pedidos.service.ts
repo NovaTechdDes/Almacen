@@ -21,21 +21,21 @@ export const cargarPedidos = async (transaction: any, pedidos: PedidoMovil[], cl
       const result = await transaction
         .request()
         .input('id_cliente', cliente.id_servidor)
-        .input('importe', pedido.importe)
         .input('estado', pedido.estado)
-        .input('observacion', pedido.observacion)
-        .input('id_vendedor', 1).query(`
+        .input('vendedor', pedido.vendedor)
+        .input('num_pedido', pedido.num_pedido)
+        .input('fecha_pedido', pedido.fecha_pedido).query(`
           INSERT INTO pedidos 
-          (id_cliente, importe, estado, id_vendedor, observacion) 
+          (id_cliente, estado, vendedor, num_pedido, fecha_pedido, facturado) 
           OUTPUT INSERTED.id_pedido
-          VALUES (@id_cliente, @importe, @estado, @id_vendedor, @observacion)`);
+          VALUES (@id_cliente, @estado, @vendedor, @num_pedido, @fecha_pedido, 0)`);
 
       //Insertar Items del pedido
 
       for (const item of JSON.parse(pedido.items)) {
         await transaction.request().input('id_pedido', result.recordset[0].id_pedido).input('id_producto', item.producto.id_producto).input('cantidad', item.cantidad).input('precio', item.precio)
           .query(`
-            INSERT INTO item_pedido (id_pedido, id_producto, cantidad, precio)
+            INSERT INTO detalle_pedido (id_pedido, id_articulo, cant_pedido, precio_pedido)
             VALUES (@id_pedido, @id_producto, @cantidad, @precio)`);
       }
     }

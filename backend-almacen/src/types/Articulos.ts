@@ -1,11 +1,12 @@
-import { Precio_Mayorista } from './Precio_Mayorista';
+import { Detalle_Pedido } from './detalle_pedido';
 
 export interface Articulos {
   id_producto: number;
-  descripcion: string;
   codigo?: string;
+  descripcion: string;
+  marca: string;
   precio: number;
-  stock: number;
+  cantidad: number;
 
-  preciosMayoristas?: Precio_Mayorista[];
+  preciosMayoristas?: Detalle_Pedido[];
 }

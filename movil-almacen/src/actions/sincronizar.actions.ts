@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { getDb } from "../db/db";
-import { querysGetPedidos } from "../db/querys";
+import { clienteMapperBackEnd } from "../mappers/cliente.mappers";
+import { productoMapper } from "../mappers/producto.mappers";
 
 const getServerUrl = async () => {
   return await AsyncStorage.getItem("@server_url");
@@ -13,14 +14,20 @@ export const startPostSincronizar = async (): Promise<boolean> => {
   try {
     const clientes = await db.getAllAsync(`SELECT * FROM clientes`);
 
-    const pedidos = await db.getAllAsync(
-      `${querysGetPedidos} WHERE estado = 'PENDIENTE'`,
+    const clientesMapeados = clientes.map((cliente: any) =>
+      clienteMapperBackEnd(cliente),
     );
 
-    const { data } = await axios.post(`${url}/sincronizar`, {
-      clientes,
-      pedidos,
+    // const pedidos = await db.getAllAsync(
+    //   `${querysGetPedidos} WHERE estado = 'PENDIENTE'`,
+    // );
+
+    const { data } = await axios.post(`http://${url}/sincronizar`, {
+      clientes: clientesMapeados,
+      // pedidos,
     });
+
+    console.log(data);
 
     if (data.ok) {
       for (const pedido of data.data.pedidos) {
@@ -76,39 +83,21 @@ export const probarConexion = async () => {
 export const startObtenerInformacion = async () => {
   const db = await getDb();
   const url = await getServerUrl();
-  console.log(`http://${url}/obtener-datos`);
   try {
     const { data } = await axios.get(`http://${url}/obtener-datos`);
 
-    if (data.data.vendedores && data.data.vendedores.length > 0) {
-      for (const vendedor of data.data.vendedores) {
-        const existe = await db.getFirstAsync(
-          `SELECT * FROM vendedor WHERE id_servidor = ?`,
-          [vendedor.id_vendedor],
-        );
-
-        if (existe) {
-          continue;
-        }
-
-        await db.runAsync(
-          `INSERT INTO vendedor (denominacion, clave, administrador, id_servidor) VALUES (?, ?, ?, ?)`,
-          [
-            vendedor.denominacion,
-            vendedor.clave,
-            vendedor.administrador,
-            vendedor.id_vendedor,
-          ],
-        );
-      }
-    }
+    const productos = data.data.productos.map((producto: any) =>
+      productoMapper(producto),
+    );
 
     if (data.data.productos && data.data.productos.length > 0) {
-      for (const producto of data.data.productos) {
+      for (const producto of productos) {
+        console.log(producto);
         await db.runAsync(
           `INSERT INTO productos (descripcion, codigo, precio, stock, id_servidor) VALUES (?, ?, ?, ?, ?)`,
           [
             producto.descripcion,
+            producto.codigo,
             producto.precio,
             producto.stock,
             producto.id_producto,
