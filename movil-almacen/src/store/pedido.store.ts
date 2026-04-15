@@ -85,8 +85,6 @@ export const usePedidoStore = create<PedidoStore>((set) => ({
           : item
       );
 
-      console.log(updateItems);
-
       const total = updateItems.reduce((acc, item) => acc + item.precioAux * item.cantidad, 0);
       return {
         items: updateItems,

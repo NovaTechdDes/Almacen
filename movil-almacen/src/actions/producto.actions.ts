@@ -1,5 +1,5 @@
-import { getDb } from "../db/db";
-import { Producto } from "../interface";
+import { getDb } from '../db/db';
+import { Producto } from '../interface';
 
 export const getProductos = async (buscador: string): Promise<Producto[]> => {
   const db = await getDb();
@@ -11,6 +11,7 @@ export const getProductos = async (buscador: string): Promise<Producto[]> => {
         p.codigo,
         p.precio,
         p.stock,
+        p.imagen_local,
         (SELECT json_group_array(
           json_object(
             'id_precio_mayorista', id_precio_mayorista,
@@ -23,16 +24,15 @@ export const getProductos = async (buscador: string): Promise<Producto[]> => {
       WHERE p.descripcion LIKE ? OR p.codigo LIKE ?
       ORDER BY p.descripcion
       LIMIT 20;`,
-      [`%${buscador}%`, `%${buscador}%`],
+      [`%${buscador}%`, `%${buscador}%`]
     )) as any[];
-
 
     return filas.map((fila) => ({
       ...fila,
-      precios_mayoristas: JSON.parse(fila.precios_mayoristas || "[]"),
+      precios_mayoristas: JSON.parse(fila.precios_mayoristas || '[]'),
     })) as Producto[];
   } catch (error) {
-    console.error("Error al obtener productos", error);
+    console.error('Error al obtener productos', error);
     return [];
   }
 };

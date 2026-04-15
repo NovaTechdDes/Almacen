@@ -39,6 +39,18 @@ export default function Pedido() {
     }
   };
 
+  const handleClose = async () => {
+    const user = await AsyncStorage.getItem('@user');
+
+    if (user) {
+      setUserActive(JSON.parse(user));
+    } else {
+      router.replace('/(tabs)/sincronizar');
+    }
+    setModalVisible(false);
+    setError(false);
+  };
+
   useEffect(() => {
     (async () => {
       const user = await AsyncStorage.getItem('@user');
@@ -57,7 +69,7 @@ export default function Pedido() {
       {/* Modal */}
       {modalOpen && <ModalPedido />}
 
-      {!userActive && <Login visible={!modalVisible} onClose={() => setModalVisible(false)} onConfirm={handleUser} error={error} />}
+      {!userActive && <Login visible={!modalVisible} onClose={handleClose} onConfirm={handleUser} error={error} />}
     </SafeAreaView>
   );
 }

@@ -1,8 +1,8 @@
-import { getDb } from "./db";
+import { getDb } from './db';
 
 export const setupDatabase = async () => {
   const conexion = await getDb();
-  await conexion.execAsync("PRAGMA foreign_keys = ON");
+  await conexion.execAsync('PRAGMA foreign_keys = ON');
 
   // const result = await conexion.getFirstAsync<{ user_version: number }>(
   //   "PRAGMA user_version",
@@ -30,12 +30,13 @@ export const setupDatabase = async () => {
 
   await conexion.execAsync(`
         CREATE TABLE IF NOT EXISTS productos (
-            id_producto INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_producto INTEGER PRIMARY KEY,
             descripcion TEXT NOT NULL,
             codigo TEXT,
             precio REAL NOT NULL,
             stock REAL NOT NULL,
             id_servidor INTEGER UNIQUE,
+            imagen_local  TEXT,
             fecha_registro DATE DEFAULT CURRENT_DATE
         )`);
 

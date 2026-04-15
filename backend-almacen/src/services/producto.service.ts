@@ -1,5 +1,6 @@
 import { pool } from '../config/db';
 import { Articulos } from '../types/Articulos';
+import { obtenerDireccionImage } from '../utils/obtenerDireccionImage';
 
 export const obtenerProductos = async (): Promise<Articulos[]> => {
   try {
@@ -31,7 +32,9 @@ export const obtenerProductos = async (): Promise<Articulos[]> => {
       precios_mayoristas: row.precios_mayoristas ? JSON.parse(row.precios_mayoristas) : [],
     }));
 
-    return articulos;
+    const articulosConImagen = obtenerDireccionImage(articulos);
+
+    return articulosConImagen;
   } catch (error) {
     console.error('Error al obtener los productos', error);
     return [];

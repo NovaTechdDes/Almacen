@@ -6,6 +6,7 @@ import { clienteMapperBackEnd } from '../mappers/cliente.mappers';
 import { pedidoMapperBackEnd } from '../mappers/pedido.mappers';
 import { productoMapper } from '../mappers/producto.mappers';
 import { actualizarProductos } from '../utils/actualizarProductos';
+import { descargarImagenes } from '../utils/descargarImagenes';
 
 const getServerUrl = async () => {
   return await AsyncStorage.getItem('@server_url');
@@ -56,7 +57,6 @@ export const startPostSincronizar = async (): Promise<boolean> => {
 
 export const probarConexion = async () => {
   const url = await getServerUrl();
-  console.log(`http://${url}/test`);
   try {
     const { data } = await axios.get(`http://${url}/test`, { timeout: 1000 });
     return data;
@@ -70,7 +70,6 @@ export const probarConexion = async () => {
 };
 
 export const startObtenerInformacion = async () => {
-  const db = await getDb();
   const url = await getServerUrl();
   try {
     const { data } = await axios.get(`http://${url}/obtener-datos`);
@@ -78,7 +77,9 @@ export const startObtenerInformacion = async () => {
     const productos = data.data.productos.map((producto: any) => productoMapper(producto));
 
     if (data.data.productos && data.data.productos.length > 0) {
-      actualizarProductos(productos);
+      const rutas = await descargarImagenes(productos);
+
+      await actualizarProductos(productos, rutas);
     }
 
     return data;

@@ -2,11 +2,14 @@ import express from 'express';
 import cors from 'cors';
 import { pool } from './config/db';
 import { clienteRoutes, sincronizarRoutes } from './routes';
+import path from 'path';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.use('/imagenes', express.static(path.join(process.cwd(), 'uploads')));
 
 app.get('/test', async (_req, res) => {
   res.status(200).json({ ok: true, message: 'API funcionando correctamente' });

@@ -8,17 +8,18 @@ interface Props {
 }
 
 export default function ProductoItem({ producto }: Props) {
-  console.log(producto.precios_mayoristas);
-
   return (
     <View className="flex-1 rounded-3xl bg-white dark:bg-slate-900 border border-gray-500 dark:border-gray-800 shadow-sm overflow-hidden">
       {/* Parte Superior: Imagen y Badges */}
       <View className="h-44 w-full bg-slate-100 dark:bg-slate-800 items-center justify-center relative">
-        <Image
-          className="h-32 w-32"
-          resizeMode="contain"
-          // source={{ uri: '...' }}
-        />
+        {producto.imagen_local ? (
+          <Image className="h-full w-full" resizeMode="contain" source={{ uri: producto.imagen_local }} />
+        ) : (
+          <View className="items-center justify-center opacity-20">
+            <Ionicons name="image-outline" size={64} color="#94a3b8" />
+            <Text className="text-slate-400 text-xs font-bold mt-2">SIN IMAGEN</Text>
+          </View>
+        )}
 
         {/* Badge de Stock */}
         <View className="absolute top-3 left-3 bg-blue-600 px-3 py-1 rounded-full">
@@ -54,7 +55,7 @@ export default function ProductoItem({ producto }: Props) {
             <View className="flex-row justify-between items-center" key={precio.id_precio_mayorista}>
               <Text className="text-slate-400 text-xs">Mayorista {index + 1}</Text>
               <Text className="text-slate-400 text-xs">Cantd: {precio.cant_mayorista}</Text>
-              <Text className="text-emerald-600 font-semibold text-sm">$ {precio.precio_mayorista?.toFixed(2) || 0}</Text>
+              <Text className="text-emerald-600 font-semibold text-sm">$ {precio.precio_mayorista?.toFixed(2) || '0.00'}</Text>
             </View>
           ))}
         </View>
