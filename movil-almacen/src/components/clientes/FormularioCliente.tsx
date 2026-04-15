@@ -1,23 +1,14 @@
-import { useMutateCliente } from "@/src/hooks";
-import { useClienteStore } from "@/src/store/cliente.store";
-import { mensaje } from "@/src/utils/mensaje";
-import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import {
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { useMutateCliente } from '@/src/hooks';
+import { useClienteStore } from '@/src/store/cliente.store';
+import { mensaje } from '@/src/utils/mensaje';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default function FormularioCliente() {
-  const { closeModalFormulario, setClienteSeleccionado, clienteSeleccionado } =
-    useClienteStore();
+  const { closeModalFormulario, setClienteSeleccionado, clienteSeleccionado } = useClienteStore();
   const { guardarCliente, actualizarCliente } = useMutateCliente();
 
   const { control, handleSubmit } = useForm({
@@ -34,18 +25,10 @@ export default function FormularioCliente() {
     if (clienteSeleccionado) {
       const res = await actualizarCliente.mutateAsync(data);
       if (res) {
-        mensaje(
-          "success",
-          "Cliente actualizado",
-          "Cliente actualizado correctamente",
-        );
+        mensaje('success', 'Cliente actualizado', 'Cliente actualizado correctamente');
         handleCloseFormulario();
       } else {
-        mensaje(
-          "error",
-          "Error al actualizar",
-          "Error al actualizar el cliente",
-        );
+        mensaje('error', 'Error al actualizar', 'Error al actualizar el cliente');
       }
       return;
     }
@@ -53,10 +36,10 @@ export default function FormularioCliente() {
     const res = await guardarCliente.mutateAsync(data);
 
     if (res) {
-      mensaje("success", "Cliente guardado", "Cliente guardado correctamente");
+      mensaje('success', 'Cliente guardado', 'Cliente guardado correctamente');
       handleCloseFormulario();
     } else {
-      mensaje("error", "Error al guardar", "Error al guardar el cliente");
+      mensaje('error', 'Error al guardar', 'Error al guardar el cliente');
     }
   };
 
@@ -68,9 +51,12 @@ export default function FormularioCliente() {
   return (
     <Modal animationType="fade" transparent={true} visible={true}>
       <View className="flex-1 items-center justify-center bg-black/60 px-6">
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        <KeyboardAwareScrollView
           className="w-full max-w-4xl"
+          enableOnAndroid
+          extraScrollHeight={58}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ paddingHorizontal: 32, paddingVertical: 28 }}
         >
           <View className="overflow-hidden rounded-3xl bg-slate-50 shadow-2xl dark:bg-slate-900">
             {/* Header */}
@@ -80,38 +66,23 @@ export default function FormularioCliente() {
                   <Ionicons name="person-add" size={24} color="#6366f1" />
                 </View>
                 <View>
-                  <Text className="text-xl font-bold text-slate-900 dark:text-white">
-                    Nuevo Cliente
-                  </Text>
-                  <Text className="text-sm text-slate-500 dark:text-slate-400">
-                    Complete los datos para registrar un nuevo cliente
-                  </Text>
+                  <Text className="text-xl font-bold text-slate-900 dark:text-white">Nuevo Cliente</Text>
+                  <Text className="text-sm text-slate-500 dark:text-slate-400">Complete los datos para registrar un nuevo cliente</Text>
                 </View>
               </View>
-              <Pressable
-                className="rounded-full p-2 active:bg-slate-100 dark:active:bg-slate-800"
-                style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
-                onPress={handleCloseFormulario}
-              >
+              <Pressable className="rounded-full p-2 active:bg-slate-100 dark:active:bg-slate-800" style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })} onPress={handleCloseFormulario}>
                 <Ionicons name="close" size={24} color="#94a3b8" />
               </Pressable>
             </View>
 
             {/* Form Content */}
-            <ScrollView className="max-h-[70vh] px-8 py-6">
+            <ScrollView className="max-h-[70vh] px-8 py-4">
               <View className="flex-row flex-wrap justify-between">
                 {/* Denominacion */}
                 <View className="mb-6 w-full ">
                   <View className="mb-2 flex-row items-center">
-                    <Ionicons
-                      name="business-outline"
-                      size={18}
-                      color="#94a3b8"
-                      className="mr-2"
-                    />
-                    <Text className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Denominación / Nombre Completo *
-                    </Text>
+                    <Ionicons name="business-outline" size={18} color="#94a3b8" className="mr-2" />
+                    <Text className="text-sm font-semibold text-slate-700 dark:text-slate-300">Denominación / Nombre Completo *</Text>
                   </View>
                   <Controller
                     control={control}
@@ -126,25 +97,14 @@ export default function FormularioCliente() {
                       />
                     )}
                   />
-                  {error && (
-                    <Text className="text-red-500">
-                      Este campo es requerido
-                    </Text>
-                  )}
+                  {error && <Text className="text-red-500">Este campo es requerido</Text>}
                 </View>
 
                 {/* DNI / CUIT */}
                 <View className="mb-6 w-[48%]">
                   <View className="mb-2 flex-row items-center">
-                    <Ionicons
-                      name="card-outline"
-                      size={18}
-                      color="#94a3b8"
-                      className="mr-2"
-                    />
-                    <Text className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      DNI / CUIT
-                    </Text>
+                    <Ionicons name="card-outline" size={18} color="#94a3b8" className="mr-2" />
+                    <Text className="text-sm font-semibold text-slate-700 dark:text-slate-300">DNI / CUIT</Text>
                   </View>
                   <Controller
                     control={control}
@@ -165,15 +125,8 @@ export default function FormularioCliente() {
                 {/* Telefono */}
                 <View className="mb-6 w-[48%]">
                   <View className="mb-2 flex-row items-center">
-                    <Ionicons
-                      name="call-outline"
-                      size={18}
-                      color="#94a3b8"
-                      className="mr-2"
-                    />
-                    <Text className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Teléfono
-                    </Text>
+                    <Ionicons name="call-outline" size={18} color="#94a3b8" className="mr-2" />
+                    <Text className="text-sm font-semibold text-slate-700 dark:text-slate-300">Teléfono</Text>
                   </View>
                   <Controller
                     control={control}
@@ -194,15 +147,8 @@ export default function FormularioCliente() {
                 {/* Direccion */}
                 <View className="mb-6 w-full">
                   <View className="mb-2 flex-row items-center">
-                    <Ionicons
-                      name="location-outline"
-                      size={18}
-                      color="#94a3b8"
-                      className="mr-2"
-                    />
-                    <Text className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Dirección
-                    </Text>
+                    <Ionicons name="location-outline" size={18} color="#94a3b8" className="mr-2" />
+                    <Text className="text-sm font-semibold text-slate-700 dark:text-slate-300">Dirección</Text>
                   </View>
                   <Controller
                     control={control}
@@ -222,15 +168,8 @@ export default function FormularioCliente() {
                 {/* Localidad */}
                 <View className="mb-8 w-full">
                   <View className="mb-2 flex-row items-center">
-                    <Ionicons
-                      name="map-outline"
-                      size={18}
-                      color="#94a3b8"
-                      className="mr-2"
-                    />
-                    <Text className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Localidad / Ciudad
-                    </Text>
+                    <Ionicons name="map-outline" size={18} color="#94a3b8" className="mr-2" />
+                    <Text className="text-sm font-semibold text-slate-700 dark:text-slate-300">Localidad / Ciudad</Text>
                   </View>
                   <Controller
                     control={control}
@@ -251,14 +190,8 @@ export default function FormularioCliente() {
 
             {/* Footer Actions */}
             <View className="flex-row items-center justify-end gap-3 border-t border-slate-200 bg-white px-8 py-6 dark:border-slate-800 dark:bg-slate-950">
-              <Pressable
-                onPress={handleCloseFormulario}
-                className="rounded-2xl px-6 py-3 active:bg-slate-100 dark:active:bg-slate-800"
-                style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
-              >
-                <Text className="text-base font-semibold text-slate-600 dark:text-slate-400">
-                  Cancelar
-                </Text>
+              <Pressable onPress={handleCloseFormulario} className="rounded-2xl px-6 py-3 active:bg-slate-100 dark:active:bg-slate-800" style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}>
+                <Text className="text-base font-semibold text-slate-600 dark:text-slate-400">Cancelar</Text>
               </Pressable>
               {clienteSeleccionado ? (
                 <Pressable
@@ -270,11 +203,7 @@ export default function FormularioCliente() {
                     transform: [{ scale: pressed ? 0.98 : 1 }],
                   })}
                 >
-                  <Text className="text-base font-bold text-white">
-                    {actualizarCliente.isPending
-                      ? "Actualizando..."
-                      : "Actualizar Cliente"}
-                  </Text>
+                  <Text className="text-base font-bold text-white">{actualizarCliente.isPending ? 'Actualizando...' : 'Actualizar Cliente'}</Text>
                 </Pressable>
               ) : (
                 <Pressable
@@ -286,16 +215,12 @@ export default function FormularioCliente() {
                     transform: [{ scale: pressed ? 0.98 : 1 }],
                   })}
                 >
-                  <Text className="text-base font-bold text-white">
-                    {guardarCliente.isPending
-                      ? "Guardando..."
-                      : "Guardar Cliente"}
-                  </Text>
+                  <Text className="text-base font-bold text-white">{guardarCliente.isPending ? 'Guardando...' : 'Guardar Cliente'}</Text>
                 </Pressable>
               )}
             </View>
           </View>
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
       </View>
     </Modal>
   );
