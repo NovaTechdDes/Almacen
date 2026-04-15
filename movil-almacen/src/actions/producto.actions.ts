@@ -14,10 +14,11 @@ export const getProductos = async (buscador: string): Promise<Producto[]> => {
         (SELECT json_group_array(
           json_object(
             'id_precio_mayorista', id_precio_mayorista,
-            'id_producto', id_producto,
-            'precio', precio
+            'id_articulo', id_articulo,
+            'precio_mayorista', precio_mayorista,
+            'cant_mayorista', cant_mayorista
           )
-        ) FROM precio_mayorista WHERE id_producto = p.id_producto) as precios_mayoristas
+        ) FROM precios_mayorista WHERE id_articulo = p.id_producto) as precios_mayoristas
       FROM productos p
       WHERE p.descripcion LIKE ? OR p.codigo LIKE ?
       ORDER BY p.descripcion

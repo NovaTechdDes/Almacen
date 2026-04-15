@@ -1,6 +1,6 @@
 export interface Precio_Mayorista {
-  id_precio: string;
-  id_producto: string;
-  precio: number;
-  cantidad: number;
+  id_precio_mayorista: number;
+  id_articulo: number;
+  precio_mayorista: number;
+  cant_mayorista: number;
 }

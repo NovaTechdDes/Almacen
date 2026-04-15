@@ -38,7 +38,7 @@ export default function PedidoItem({ producto }: Props) {
             >
               {producto.descripcion}
             </Text>
-            <Text className="text-slate-400 text-[10px] mb-2">
+            <Text className="text-slate-400 dark text-[10px] mb-2">
               Marca Genérica
             </Text>
             <Text className="text-blue-600 font-extrabold text-base">

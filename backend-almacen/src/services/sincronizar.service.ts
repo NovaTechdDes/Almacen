@@ -14,13 +14,6 @@ export const sincronizar = async (data: any) => {
 
   try {
     await transaction.begin();
-
-    // if (clientes && clientes.length > 0) {
-    //   clientesSincronizados = await cargarClientes(transaction, clientes);
-    // } else {
-    //   clientesSincronizados = await obtenerClientes();
-    // }
-
     if (pedidos && pedidos.length > 0) {
       pedidosSincronizados = await cargarPedidos(transaction, pedidos, clientes);
     }

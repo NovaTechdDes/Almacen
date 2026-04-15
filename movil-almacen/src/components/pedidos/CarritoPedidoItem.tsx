@@ -1,8 +1,8 @@
-import { ProductoCarrito } from "@/src/interface";
-import { usePedidoStore } from "@/src/store/pedido.store";
-import { Ionicons } from "@expo/vector-icons";
-import React from "react";
-import { Pressable, Text, View } from "react-native";
+import { ProductoCarrito } from '@/src/interface';
+import { usePedidoStore } from '@/src/store/pedido.store';
+import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { Pressable, Text, View } from 'react-native';
 
 interface CarritoPedidoItemProps {
   item: ProductoCarrito;
@@ -36,13 +36,8 @@ const CarritoPedidoItem = ({ item }: CarritoPedidoItemProps) => {
             {item.descripcion}
           </Text>
 
-          {/* Selector de Variante Placeholder */}
-          <View className="flex-row items-center justify-between bg-slate-50 border border-slate-100 rounded-lg px-3 py-1.5 mt-1.5">
-            <Text className="text-slate-500 text-[10px]">
-              Mayorista 2 - ${item.precio.toLocaleString()}
-            </Text>
-            <Ionicons name="chevron-down" size={14} color="#94a3b8" />
-          </View>
+          {/* Selector de Variante / Precio Mayorista */}
+          <View className="mt-2"></View>
         </View>
       </View>
 
@@ -57,14 +52,7 @@ const CarritoPedidoItem = ({ item }: CarritoPedidoItemProps) => {
               transform: [{ scale: pressed ? 0.95 : 1 }],
             })}
           >
-            {({ pressed }) => (
-              <Ionicons
-                name="remove"
-                size={22}
-                color={pressed ? "#ef4444" : "#64748b"}
-                className={pressed ? "bg-[#ef4444]/10 rounded-full" : ""}
-              />
-            )}
+            {({ pressed }) => <Ionicons name="remove" size={22} color={pressed ? '#ef4444' : '#64748b'} className={pressed ? 'bg-[#ef4444]/10 rounded-full' : ''} />}
           </Pressable>
           <Text className="mx-4 font-bold text-slate-700">{item.cantidad}</Text>
           <Pressable
@@ -75,14 +63,7 @@ const CarritoPedidoItem = ({ item }: CarritoPedidoItemProps) => {
               transform: [{ scale: pressed ? 0.95 : 1 }],
             })}
           >
-            {({ pressed }) => (
-              <Ionicons
-                name="add"
-                size={22}
-                color={pressed ? "#22c55e" : "#64748b"}
-                className={pressed ? "bg-[#22c55e]/10 rounded-full" : ""}
-              />
-            )}
+            {({ pressed }) => <Ionicons name="add" size={22} color={pressed ? '#22c55e' : '#64748b'} className={pressed ? 'bg-[#22c55e]/10 rounded-full' : ''} />}
           </Pressable>
         </View>
 
@@ -95,18 +76,11 @@ const CarritoPedidoItem = ({ item }: CarritoPedidoItemProps) => {
             className="mr-4"
             onPress={handleRemoveItem}
           >
-            {({ pressed }) => (
-              <Ionicons
-                name="trash-outline"
-                size={22}
-                color={pressed ? "#ef4444" : "#ef4444"}
-                className={pressed ? "bg-[#ef4444]/10 rounded-full" : ""}
-              />
-            )}
+            {({ pressed }) => <Ionicons name="trash-outline" size={22} color={pressed ? '#ef4444' : '#ef4444'} className={pressed ? 'bg-[#ef4444]/10 rounded-full' : ''} />}
           </Pressable>
           <Text className="text-blue-600 font-extrabold text-base">
             $
-            {(item.precio * item.cantidad).toLocaleString("es-AR", {
+            {(item.precioAux * item.cantidad).toLocaleString('es-AR', {
               minimumFractionDigits: 2,
             })}
           </Text>

@@ -5,3 +5,4 @@ export * from "./Producto";
 export * from "./Vendedor";
 
 export * from "./ProductoCarrito";
+export * from "./Precio_Mayorista";

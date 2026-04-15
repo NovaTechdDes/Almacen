@@ -1,11 +1,14 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
-import { getDb } from "../db/db";
-import { clienteMapperBackEnd } from "../mappers/cliente.mappers";
-import { productoMapper } from "../mappers/producto.mappers";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { getDb } from '../db/db';
+import { querysGetPedidos } from '../db/querys';
+import { clienteMapperBackEnd } from '../mappers/cliente.mappers';
+import { pedidoMapperBackEnd } from '../mappers/pedido.mappers';
+import { productoMapper } from '../mappers/producto.mappers';
+import { actualizarProductos } from '../utils/actualizarProductos';
 
 const getServerUrl = async () => {
-  return await AsyncStorage.getItem("@server_url");
+  return await AsyncStorage.getItem('@server_url');
 };
 
 export const startPostSincronizar = async (): Promise<boolean> => {
@@ -14,51 +17,39 @@ export const startPostSincronizar = async (): Promise<boolean> => {
   try {
     const clientes = await db.getAllAsync(`SELECT * FROM clientes`);
 
-    const clientesMapeados = clientes.map((cliente: any) =>
-      clienteMapperBackEnd(cliente),
-    );
+    const clientesMapeados = clientes.map((cliente: any) => clienteMapperBackEnd(cliente));
 
-    // const pedidos = await db.getAllAsync(
-    //   `${querysGetPedidos} WHERE estado = 'PENDIENTE'`,
-    // );
+    const pedidos = await db.getAllAsync(`${querysGetPedidos} WHERE estado = 'PENDIENTE'`);
+    const pedidosMapeados = await Promise.all(pedidos.map((pedido: any) => pedidoMapperBackEnd(pedido)));
+
+    console.log(pedidosMapeados);
 
     const { data } = await axios.post(`http://${url}/sincronizar`, {
       clientes: clientesMapeados,
-      // pedidos,
+      pedidos: pedidosMapeados,
     });
 
     if (data.ok) {
+      // Actualizamos los estados de los pedidos que fueron procesados por el servidor
       for (const pedido of data.data.pedidos) {
-        await db.runAsync(`UPDATE pedidos SET estado = ? WHERE id_pedido = ?`, [
-          pedido.estado,
-          pedido.id_pedido,
-        ]);
+        await db.runAsync(`UPDATE pedidos SET estado = 'SINCRONIZADO' WHERE id_pedido = ?`, pedido.num_pedido);
       }
 
+      // Sincronizamos los IDs de clientes (vincular cliente local con ID del servidor)
       for (const cliente of data.data.clientes) {
-        await db.runAsync(
-          `UPDATE clientes SET id_servidor = ? WHERE id_cliente = ?`,
-          [cliente.id_servidor, cliente.id_cliente],
-        );
+        await db.runAsync(`UPDATE clientes SET id_servidor = ? WHERE id_cliente = ?`, [cliente.id_servidor, cliente.id_cliente]);
       }
 
-      for (const producto of data.data.productos) {
-        await db.runAsync(
-          `UPDATE productos SET descripcion = ?, codigo = ?, stock = ?, precio = ? WHERE id_producto = ?`,
-          [
-            producto.descripcion,
-            producto.codigo,
-            producto.stock,
-            producto.precio,
-            producto.id_producto,
-          ],
-        );
-      }
+      // Sincronizamos el catálogo completo de productos y sus precios mayoristas
+      // La función actualizarProductos ya maneja transacciones y lógica de UPSERT (Insert o Update)
+      const productos = data.data.productos.map((p: any) => productoMapper(p));
+      await actualizarProductos(productos);
+
       return true;
     }
     return false;
   } catch (error) {
-    console.error("Error al sincronizar", error);
+    console.error('Error al sincronizar', error);
     return false;
   }
 };
@@ -73,7 +64,7 @@ export const probarConexion = async () => {
     console.error(error);
     return {
       ok: false,
-      msg: "Error al probar la conexion",
+      msg: 'Error al probar la conexion',
     };
   }
 };
@@ -84,23 +75,10 @@ export const startObtenerInformacion = async () => {
   try {
     const { data } = await axios.get(`http://${url}/obtener-datos`);
 
-    const productos = data.data.productos.map((producto: any) =>
-      productoMapper(producto),
-    );
+    const productos = data.data.productos.map((producto: any) => productoMapper(producto));
 
     if (data.data.productos && data.data.productos.length > 0) {
-      for (const producto of productos) {
-        await db.runAsync(
-          `INSERT INTO productos (descripcion, codigo, precio, stock, id_servidor) VALUES (?, ?, ?, ?, ?)`,
-          [
-            producto.descripcion,
-            producto.codigo,
-            producto.precio,
-            producto.stock,
-            producto.id_producto,
-          ],
-        );
-      }
+      actualizarProductos(productos);
     }
 
     return data;
@@ -108,7 +86,7 @@ export const startObtenerInformacion = async () => {
     console.error(error);
     return {
       ok: false,
-      msg: "Error al obtener los datos",
+      msg: 'Error al obtener los datos',
     };
   }
 };

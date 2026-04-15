@@ -40,12 +40,12 @@ export const setupDatabase = async () => {
         )`);
 
   await conexion.execAsync(`
-      CREATE TABLE IF NOT EXISTS precio_mayorista (
+      CREATE TABLE IF NOT EXISTS precios_mayorista (
         id_precio_mayorista INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_producto INTEGER NOT NULL,
-        precio REAL NOT NULL,
-        fecha_registro DATE DEFAULT CURRENT_DATE,
-        FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
+        id_articulo INTEGER NOT NULL,
+        precio_mayorista REAL,
+        cant_mayorista REAL,
+        FOREIGN KEY (id_articulo) REFERENCES productos(id_producto)
       )    
     `);
 

@@ -1,13 +1,13 @@
-import { useClientes } from "@/src/hooks";
-import { Ionicons } from "@expo/vector-icons";
-import React from "react";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
-import { Dropdown } from "react-native-element-dropdown";
-import { usePedidoStore } from "../../store/pedido.store";
-import Loading from "../ui/Loading";
-import CarritoPedido from "./CarritoPedido";
-import ProductosPedidos from "./ProductosPedidos";
-import TotalPedido from "./TotalPedido";
+import { useClientes } from '@/src/hooks';
+import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
+import { usePedidoStore } from '../../store/pedido.store';
+import Loading from '../ui/Loading';
+import CarritoPedido from './CarritoPedido';
+import ProductosPedidos from './ProductosPedidos';
+import TotalPedido from './TotalPedido';
 
 const ModalPedido = () => {
   const { clearPedido, setCliente, cliente } = usePedidoStore();
@@ -21,16 +21,11 @@ const ModalPedido = () => {
 
   return (
     <Modal animationType="slide" transparent={false} visible={true}>
-      <View className="flex-1 bg-slate-50">
+      <View className="flex-1 bg-slate-50 mb-10">
         {/* Header con título y botón cerrar */}
         <View className="flex-row justify-between items-center px-8 py-6 bg-white border-b border-slate-100">
-          <Text className="text-2xl font-bold text-slate-800">
-            Nuevo Pedido
-          </Text>
-          <Pressable
-            onPress={handleClearCarrito}
-            className="p-2 rounded-full hover:bg-slate-100"
-          >
+          <Text className="text-2xl font-bold text-slate-800">Nuevo Pedido</Text>
+          <Pressable onPress={handleClearCarrito} className="p-2 rounded-full hover:bg-slate-100">
             <Ionicons name="close" size={24} color="#64748b" />
           </Pressable>
         </View>
@@ -40,9 +35,7 @@ const ModalPedido = () => {
           <View className="flex-[0.6] px-8 pt-6 border-r border-slate-200">
             {/* Sección Cliente Placeholder */}
             <View className="mb-6">
-              <Text className="text-sm font-semibold text-slate-500 mb-2">
-                Cliente
-              </Text>
+              <Text className="text-sm font-semibold text-slate-500 mb-2">Cliente</Text>
               <View className="bg-white border border-slate-200 rounded-xl shadow-sm shadow-slate-200">
                 <Dropdown
                   style={styles.dropdown}
@@ -87,29 +80,29 @@ export default ModalPedido;
 const styles = StyleSheet.create({
   dropdown: {
     height: 50,
-    width: "100%",
+    width: '100%',
     paddingHorizontal: 16,
   },
   placeholderStyle: {
     fontSize: 16,
-    color: "#94a3b8",
+    color: '#94a3b8',
   },
   selectedTextStyle: {
     fontSize: 16,
-    color: "#1e293b",
-    fontWeight: "500",
+    color: '#1e293b',
+    fontWeight: '500',
   },
   inputSearchStyle: {
     height: 45,
     fontSize: 16,
     borderRadius: 8,
-    color: "#1e293b",
+    color: '#1e293b',
   },
   containerStyle: {
     borderRadius: 12,
     marginTop: 8,
-    overflow: "hidden",
+    overflow: 'hidden',
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: '#e2e8f0',
   },
 });
