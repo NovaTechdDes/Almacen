@@ -62,7 +62,7 @@ export default function Pedido() {
   }, []);
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-gray-50 dark:bg-slate-900">
       {/* main */}
       <ListaPedidos pedidos={pedidos || []} refreshing={refreshing} onRefresh={onRefresh} />
 

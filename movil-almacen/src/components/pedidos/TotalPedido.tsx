@@ -40,8 +40,8 @@ export default function TotalPedido() {
   return (
     <View>
       <View className="flex-row justify-between items-center mb-6">
-        <Text className="text-xl font-bold text-slate-800">Total</Text>
-        <Text className="text-3xl font-extrabold text-blue-600">${total.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</Text>
+        <Text className="text-xl font-bold text-slate-800 dark:text-slate-200">Total</Text>
+        <Text className="text-3xl font-extrabold text-blue-600 dark:text-blue-400">${total.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</Text>
       </View>
 
       {error && !cliente && (
@@ -63,9 +63,9 @@ export default function TotalPedido() {
             opacity: pressed ? 0.8 : 1,
             transform: [{ scale: pressed ? 0.95 : 1 }],
           })}
-          className="flex-1 bg-white border border-slate-200 py-4 rounded-xl items-center shadow-sm shadow-slate-100"
+          className="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 py-4 rounded-xl items-center shadow-sm shadow-slate-100 dark:shadow-none"
         >
-          {({ pressed }) => <Text className={`font-bold ${pressed ? 'text-slate-400' : 'text-slate-600'}`}>Cancelar</Text>}
+          {({ pressed }) => <Text className={`font-bold ${pressed ? 'text-slate-400' : 'text-slate-600 dark:text-slate-300'}`}>Cancelar</Text>}
         </Pressable>
         <Pressable disabled={postPedidoMutation.isPending} onPress={handleCreatePedido} className="flex-[1.5] bg-blue-500 py-4 rounded-xl items-center shadow-md shadow-blue-200">
           <Text className="text-white font-bold text-lg">{postPedidoMutation.isPending ? 'Creando...' : 'Crear Pedido'}</Text>

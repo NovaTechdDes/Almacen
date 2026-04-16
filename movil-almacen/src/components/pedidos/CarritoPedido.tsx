@@ -9,11 +9,14 @@ export default function CarritoPedido() {
 
   return (
     <View className="flex-1">
-      <View className="flex-row items-center mb-6">
-        <Ionicons name="cart-outline" size={24} color="#334155" />
-        <Text className="text-xl font-bold text-slate-700 ml-2">
-          Carrito ({items.length})
-        </Text>
+      <View className="flex-row items-center justify-between mb-6">
+        <View className="flex-row items-center">
+          <Ionicons name="cart-outline" size={24} color="#334155" />
+          <Text className="text-xl font-bold text-slate-700 dark:text-slate-200 ml-2">
+            Carrito ({items.length})
+          </Text>
+        </View>
+        <Ionicons name="cart" size={28} color="#205f8a" />
       </View>
       
       <FlatList

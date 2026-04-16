@@ -8,9 +8,9 @@ export default function Buscador() {
 
   return (
     <View className="flex-row gap-3 w-[50%] items-center">
-      <View className="flex-row items-center bg-gray-100 px-2 py-1 rounded-lg flex-1 border-gray-200 border">
+      <View className="flex-row items-center bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded-lg flex-1 border-gray-200 dark:border-slate-700 border">
         <Ionicons name="search" size={20} color="#64748b" />
-        <TextInput placeholder="Buscar pedido" className="flex-1 text-sm" />
+        <TextInput placeholder="Buscar pedido" placeholderTextColor={"#64748b"} className="flex-1 text-sm dark:text-white" />
       </View>
 
       <Pressable

@@ -1,4 +1,4 @@
-import { Precio_Mayorista, Producto } from "./index";
+import { Precio_Mayorista, Producto } from './index';
 
 export interface ProductoCarrito {
   id_producto: number;
@@ -7,6 +7,7 @@ export interface ProductoCarrito {
   precioAux: number;
   cantidad: number;
   precios_mayoristas?: Precio_Mayorista[];
+  imagen_local?: string;
 
   producto?: Producto;
 }

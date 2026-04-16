@@ -30,17 +30,17 @@ export default function PedidoCard({ item }: Props) {
   };
 
   return (
-    <View className="bg-white p-4 rounded-xl shadow-sm mb-4 border border-gray-400">
+    <View className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm mb-4 border border-gray-400 dark:border-slate-700">
       <View className="flex-row gap-5">
         {/* Logo */}
-        <View className="rounded-full bg-[#7cc1f0] p-2">
+        <View className="rounded-full bg-[#7cc1f0] dark:bg-slate-700 p-2">
           <Ionicons name="cart-outline" size={24} color="#205f8a" />
         </View>
 
         <View>
           {/* Numero de pedido y estado */}
           <View className="flex-row gap-2">
-            <Text className="text-lg font-bold">
+            <Text className="text-lg font-bold dark:text-white">
               Pedido: {item?.id_pedido?.toString().padStart(4, "0")}
             </Text>
             {item?.estado === "PENDIENTE" ? (
@@ -74,8 +74,8 @@ export default function PedidoCard({ item }: Props) {
         {/* Total */}
         <View className="ml-auto flex-row items-center gap-2">
           <View className="gap-2 text-sm  px-2 py-1 rounded-full">
-            <Text className="text-lg font-bold">Total</Text>
-            <Text className="text-2xl font-bold text-blue-600">
+            <Text className="text-lg font-bold dark:text-slate-300">Total</Text>
+            <Text className="text-2xl font-bold text-blue-600 dark:text-blue-400">
               ${item?.importe.toFixed(2)}
             </Text>
           </View>
@@ -89,9 +89,9 @@ export default function PedidoCard({ item }: Props) {
       </View>
 
       {/* Productos */}
-      <View className="border-t border-gray-500 mt-5 pt-5">
+      <View className="border-t border-gray-500 dark:border-slate-700 mt-5 pt-5">
         <View>
-          <Text className="text-xl text-gray-500">
+          <Text className="text-xl text-gray-500 dark:text-slate-400">
             {item?.items?.length || 0} Productos
           </Text>
         </View>

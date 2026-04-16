@@ -2,7 +2,7 @@ import { ProductoCarrito } from '@/src/interface';
 import { usePedidoStore } from '@/src/store/pedido.store';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
 
 interface CarritoPedidoItemProps {
   item: ProductoCarrito;
@@ -24,15 +24,15 @@ const CarritoPedidoItem = ({ item }: CarritoPedidoItemProps) => {
   };
 
   return (
-    <View className="bg-white border border-slate-100 rounded-3xl p-4 shadow-sm shadow-slate-100">
+    <View className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-3xl p-4 shadow-sm shadow-slate-100 dark:shadow-none">
       <View className="flex-row items-center mb-4">
         {/* Miniatura */}
-        <View className="h-12 w-12 bg-slate-50 rounded-xl items-center justify-center mr-3">
-          <Ionicons name="cube-outline" size={20} color="#94a3b8" />
+        <View className="h-12 w-12 bg-slate-50 dark:bg-slate-700 rounded-xl items-center justify-center mr-3">
+          {item.imagen_local ? <Image source={{ uri: item.imagen_local }} className="h-12 w-12 rounded-xl" /> : <Ionicons name="cube-outline" size={20} color="#94a3b8" />}
         </View>
 
         <View className="flex-1">
-          <Text className="text-slate-800 font-bold text-sm" numberOfLines={1}>
+          <Text className="text-slate-800 dark:text-slate-200 font-bold text-sm" numberOfLines={1}>
             {item.descripcion}
           </Text>
 

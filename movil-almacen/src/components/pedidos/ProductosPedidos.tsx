@@ -13,14 +13,14 @@ export default function ProductosPedidos() {
   return (
     <View className="flex-1">
       {/* Buscador */}
-      <View className="flex-row items-center bg-white border border-slate-200 rounded-xl px-4 py-3 mb-6 shadow-sm shadow-slate-200">
+      <View className="flex-row items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 mb-6 shadow-sm shadow-slate-200 dark:shadow-none">
         <Ionicons name="search" size={20} color="#94a3b8" />
         <TextInput
           value={buscador}
           onChangeText={setBuscador}
           placeholder="Buscar productos..."
           placeholderTextColor="#94a3b8"
-          className="flex-1 ml-3 text-slate-600"
+          className="flex-1 ml-3 text-slate-600 dark:text-white"
         />
       </View>
 

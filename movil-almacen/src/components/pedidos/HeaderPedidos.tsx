@@ -19,11 +19,11 @@ export default function HeaderPedidos() {
   };
 
   return (
-    <View className="bg-white py-10 px-5 flex-row justify-between">
+    <View className="bg-white dark:bg-slate-900 py-10 px-5 flex-row justify-between transition-colors">
       <View className="mb-5 flex-row justify-between gap-5">
         <View>
-          <Text className="text-4xl font-bold">Pedidos</Text>
-          <Text className="text-gray-500">
+          <Text className="text-4xl font-bold text-slate-900 dark:text-white">Pedidos</Text>
+          <Text className="text-gray-500 dark:text-slate-400">
             {pedidos?.length} pedidos registrados
           </Text>
         </View>
