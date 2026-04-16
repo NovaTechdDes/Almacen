@@ -18,7 +18,8 @@ ArchitecturesInstallIn64BitMode=x64
 ; ==============================
 [Files]
 Source: "nssm.exe"; DestDir: "{app}"
-Source: "node-v24.14.1-x64.msi"; DestDir: "{tmp}"
+Source: "instaladores\node.msi"; DestDir: "{tmp}\instaladores"
+Source: "instaladores\cloudflared.exe"; DestDir: "{tmp}\instaladores"
 Source: "..\package.json"; DestDir: "{app}"
 Source: "backend\*"; DestDir: "{app}"; Flags: recursesubdirs; AfterInstall: CrearEnv
 
@@ -32,17 +33,30 @@ Name: "{app}\logs"
 ; INSTALAR NODE SILENCIOSO
 ; ==============================
 [Run]
-Filename: "msiexec.exe"; Parameters: "/i ""{tmp}\node-v24.14.1-x64.msi"" /qn"; StatusMsg: "Instalando Node.js..."; Flags: waituntilterminated
+Filename: "msiexec.exe"; Parameters: "/i ""{tmp}\instaladores\node.msi"" /qn"; StatusMsg: "Instalando Node.js..."; Flags: waituntilterminated
+
 Filename: "cmd.exe"; Parameters: "/C ""{pf}\nodejs\npm.cmd"" install --omit=dev"; WorkingDir: "{app}"; StatusMsg: "Instalando dependencias..."; Flags: waituntilterminated
 
 ; Instalar servicio con NSSM
 Filename: "{app}\nssm.exe"; Parameters: "install MiServidorBackup ""C:\Program Files\nodejs\node.exe"" ""{app}\dist\server.js"""; Flags: runhidden waituntilterminated
 
 ; Directorio de trabajo
-Filename: "{app}\nssm.exe"; Parameters: "set MiServidorBackup AppDirectory ""{app}"""; Flags: runhidden waituntilterminated
+Filename: "{app}\nssm.exe"; \
+Parameters: "set MiServidorBackup AppDirectory ""{app}"""; \
+Flags: runhidden waituntilterminated
+
+;Instalar Cloudflare
+Filename: "{tmp}\instaladores\cloudflared.exe"; \
+Parameters: "service install eyJhIjoiN2RjOGMzN2YzN2UyMDQ3MjE4ZGIxYWJmNmNhMDA1N2UiLCJ0IjoiZDQzNjkxMjEtNTc1Ny00NmExLWIwNGUtOGU1Nzk2ZmE4MjU2IiwicyI6IlpXWTBOelJqWVdVdE9ESmlaQzAwTUdVM0xXSmxZVFl0WldRM1l6Sm1PVFU0TWpObCJ9"; \
+Flags: runhidden waituntilterminated 
+
 
 ; Logs
-Filename: "{app}\nssm.exe"; Parameters: "set MiServidorBackup AppStdout ""{app}\logs\output.log"""; Flags: runhidden waituntilterminated
+Filename: "{app}\nssm.exe"; \
+Parameters: "set MiServidorBackup AppStdout ""{app}\logs\output.log"""; \
+Flags: runhidden waituntilterminated
+
+
 Filename: "{app}\nssm.exe"; Parameters: "set MiServidorBackup AppStderr ""{app}\logs\error.log"""; Flags: runhidden waituntilterminated
 
 ; Inicio automatico
@@ -73,7 +87,7 @@ begin
   ConfigPage.Add('DB_USER:', False);
   ConfigPage.Add('DB_PASSWORD:', False);
   ConfigPage.Add('DB_HOST:', False);
-  ConfigPage.Add('DB_PORT:', False);
+  ConfigPage.Add('PORT:', False);
 
   // Valor Por defecto
   ConfigPage.Values[0] := 'sa';

@@ -1,13 +1,18 @@
 {
   "expo": {
-    "name": "movil-almacen",
-    "slug": "movil-almacen",
+    "name": "Maranatha-movil",
+    "slug": "maranatha-movil",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/icons/adaptive-icon.png",
-    "scheme": "movilalmacen",
+    "scheme": "maranathamovil",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "runtimeVersion": "1",
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    },
     "ios": {
       "supportsTablet": true
     },
@@ -18,9 +23,8 @@
         "backgroundImage": "./assets/icons/adaptive-icon.png",
         "monochromeImage": "./assets/icons/adaptive-icon.png"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.pelusaaal.movilalmacen"
+      "package": "com.novatech.maranathamovil"
     },
     "web": {
       "output": "static",
@@ -40,11 +44,32 @@
           }
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          },
+          "ios": {
+            "infoPlist": {
+              "NSAppTransportSecurity": {
+                "NSAllowsArbitraryLoads": true
+              }
+            }
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "43ce48e7-b307-409d-baca-1aa3fc4eb7a6"
+      }
     }
   }
 }
