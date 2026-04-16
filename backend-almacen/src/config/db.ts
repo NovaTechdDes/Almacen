@@ -1,5 +1,5 @@
-import sql from "mssql";
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
+import sql from 'mssql';
 
 dotenv.config();
 
@@ -11,6 +11,7 @@ const config: sql.config = {
   port: Number(process.env.DB_PORT!),
   options: {
     encrypt: false,
+    trustServerCertificate: true,
   },
 };
 

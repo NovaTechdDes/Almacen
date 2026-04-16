@@ -21,7 +21,9 @@ export const obtenerProductos = async (): Promise<Articulos[]> => {
     `;
     const result = await pool.request().query(query);
 
+    
     const articulosMap = new Map();
+    
 
     for (const row of result.recordset) {
       if (!articulosMap.has(row.id_articulo)) {
@@ -38,6 +40,7 @@ export const obtenerProductos = async (): Promise<Articulos[]> => {
     }
 
     const articulos = Array.from(articulosMap.values());
+    console.log(articulos)
 
     const articulosConImagen = obtenerDireccionImage(articulos);
 
