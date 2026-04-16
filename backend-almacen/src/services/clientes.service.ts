@@ -80,7 +80,7 @@ export const cargarClientes = async (transaction: any, clientes: ClienteMovil[])
   }
 };
 
-export const cargarCliente = async (cliente: ClienteMovil, vendedor: string) => {
+export const cargarCliente = async (cliente: ClienteMovil, vendedor?: string) => {
   try {
     const result = await pool
       .request()

@@ -10,7 +10,7 @@ export const actualizarProductos = async (productos: any[], rutas?: string[]) =>
       await db.runAsync(`DELETE FROM precios_mayorista`);
 
       for (const producto of productos) {
-        const imagenLocal = rutas?.find((ruta) => ruta.includes(producto.codigo));
+        const imagenLocal = rutas?.find((ruta) => ruta.includes(producto.codigo)) || '';
 
         // 2. Insertamos o Actualizamos el producto (UPSERT)
         // Usamos ON CONFLICT para que si el id_servidor ya existe, solo actualice los datos.
@@ -36,7 +36,7 @@ export const actualizarProductos = async (productos: any[], rutas?: string[]) =>
 
         if (idLocalProducto) {
           // 3. Insertamos los precios mayoristas vinculados al ID local
-          for (const precio of producto.precios_mayoristas) {
+          for (const precio of producto?.precios_mayoristas) {
             await db.runAsync(`INSERT INTO precios_mayorista (id_articulo, precio_mayorista, cant_mayorista) VALUES (?, ?, ?)`, [idLocalProducto, precio.precio_mayorista, precio.cant_mayorista]);
           }
         }

@@ -79,7 +79,6 @@ export const startObtenerInformacion = async () => {
 
     if (data.data.productos && data.data.productos.length > 0) {
       const rutas = await descargarImagenes(productos);
-
       await actualizarProductos(productos, rutas);
     }
 
