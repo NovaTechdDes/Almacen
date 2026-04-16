@@ -16,14 +16,14 @@ export const obtenerProductos = async (): Promise<Articulos[]> => {
         pm.cant_mayorista,
         pm.precio_mayorista
     FROM articulos a
-    LEFT JOIN precios_mayoristas pm ON a.id_articulo = pm.id_articulo
+    INNER JOIN precios_mayoristas pm ON a.id_articulo = pm.id_articulo
     ORDER BY a.codigo
     `;
     const result = await pool.request().query(query);
 
     const articulosMap = new Map();
 
-    result.recordset.forEach((row) => {
+    for (const row of result.recordset) {
       if (!articulosMap.has(row.id_articulo)) {
         articulosMap.set(row.id_articulo, {
           id_articulo: row.id_articulo,
@@ -35,16 +35,7 @@ export const obtenerProductos = async (): Promise<Articulos[]> => {
           precios_mayoristas: [],
         });
       }
-
-      if (row.id_precio != null) {
-        articulosMap.get(row.id_articulo).precios_mayoristas.push({
-          id_precio: row.id_precio,
-          id_articulo: row.id_articulo,
-          cant_mayorista: row.cant_mayorista,
-          precio_mayorista: row.precio_mayorista,
-        });
-      }
-    });
+    }
 
     const articulos = Array.from(articulosMap.values());
 

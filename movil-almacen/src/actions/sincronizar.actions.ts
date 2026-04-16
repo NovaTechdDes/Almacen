@@ -23,8 +23,6 @@ export const startPostSincronizar = async (): Promise<boolean> => {
     const pedidos = await db.getAllAsync(`${querysGetPedidos} WHERE estado = 'PENDIENTE'`);
     const pedidosMapeados = await Promise.all(pedidos.map((pedido: any) => pedidoMapperBackEnd(pedido)));
 
-    console.log(pedidosMapeados);
-
     const { data } = await axios.post(`http://${url}/sincronizar`, {
       clientes: clientesMapeados,
       pedidos: pedidosMapeados,
@@ -44,7 +42,8 @@ export const startPostSincronizar = async (): Promise<boolean> => {
       // Sincronizamos el catálogo completo de productos y sus precios mayoristas
       // La función actualizarProductos ya maneja transacciones y lógica de UPSERT (Insert o Update)
       const productos = data.data.productos.map((p: any) => productoMapper(p));
-      await actualizarProductos(productos);
+      const rutas = await descargarImagenes(productos);
+      await actualizarProductos(productos, rutas);
 
       return true;
     }
