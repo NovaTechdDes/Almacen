@@ -71,6 +71,7 @@ export const probarConexion = async () => {
 
 export const startObtenerInformacion = async () => {
   const url = await getServerUrl();
+
   try {
     const { data } = await axios.get(`http://${url}/obtener-datos`);
 

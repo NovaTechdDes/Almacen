@@ -19,6 +19,7 @@ export async function descargarImagenes(productos: Producto[]) {
         const url = producto.imagen_local;
         // Extraemos la extensión manejando posibles parámetros de búsqueda en la URLs
         const extension = url.split('/').pop()?.split('?')[0].split('.').pop() || 'jpg';
+        console.log(extension);
 
         // Usamos la clase File para construir la ruta de forma segura
         const archivoLocal = new FileSystem.File(carpeta, `${producto.codigo}.${extension}`);

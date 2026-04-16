@@ -21,7 +21,7 @@ export const productoMapper = (producto: ProductoBackEnd) => {
     precio: producto.precio ?? 0,
     stock: producto.cantidad ?? 0,
     id_articulo: producto.id_articulo,
-    imagenURL: producto.imagenURL,
+    imagen_local: producto.imagenURL,
 
     precios_mayoristas: producto.precios_mayoristas,
   };
