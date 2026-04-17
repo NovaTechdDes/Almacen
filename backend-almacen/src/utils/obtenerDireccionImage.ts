@@ -12,7 +12,7 @@ export const obtenerDireccionImage = (articulos: Articulos[]) => {
 
     return {
       ...art,
-      imagenURL: archivoImagen ? `http://${process.env.IMAGE_URL}:${process.env.PORT}/imagenes/${archivoImagen}` : '',
+      imagenURL: archivoImagen ? `${process.env.BASE_URL}/imagenes/${archivoImagen}` : '',
     };
   });
 
