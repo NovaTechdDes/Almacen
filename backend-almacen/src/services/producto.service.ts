@@ -21,9 +21,8 @@ export const obtenerProductos = async (): Promise<Articulos[]> => {
     `;
     const result = await pool.request().query(query);
 
-    
+    //console.log(result.recordset);
     const articulosMap = new Map();
-    
 
     for (const row of result.recordset) {
       if (!articulosMap.has(row.id_articulo)) {
@@ -37,10 +36,18 @@ export const obtenerProductos = async (): Promise<Articulos[]> => {
           precios_mayoristas: [],
         });
       }
+
+      if (row.id_precio) {
+        articulosMap.get(row.id_articulo).precios_mayoristas.push({
+          id_precio: row.id_precio,
+          cant_mayorista: row.cant_mayorista,
+          precio_mayorista: row.precio_mayorista,
+        });
+      }
     }
 
     const articulos = Array.from(articulosMap.values());
-    console.log(articulos)
+    //console.log(articulos);
 
     const articulosConImagen = obtenerDireccionImage(articulos);
 
