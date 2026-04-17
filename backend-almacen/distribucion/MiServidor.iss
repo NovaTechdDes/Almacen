@@ -3,7 +3,7 @@
 ; ==============================
 [Setup]
 AppName=ServidorAlmacen
-AppVersion=1.0.0
+AppVersion=1.0.1
 DefaultDirName={commonappdata}\ServidorAlmacen
 DefaultGroupName=ServidorAlmacen
 OutputDir=output
