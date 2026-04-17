@@ -2,13 +2,14 @@
   "expo": {
     "name": "Maranatha-movil",
     "slug": "maranatha-movil",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "default",
     "icon": "./assets/icons/adaptive-icon.png",
     "scheme": "maranathamovil",
     "userInterfaceStyle": "automatic",
-    "runtimeVersion": "1",
+    "runtimeVersion": "2",
     "updates": {
+      "url": "https://u.expo.dev/43ce48e7-b307-409d-baca-1aa3fc4eb7a6",
       "enabled": true,
       "checkAutomatically": "ON_LOAD",
       "fallbackToCacheTimeout": 0

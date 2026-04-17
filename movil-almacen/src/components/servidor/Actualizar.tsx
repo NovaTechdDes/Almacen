@@ -31,7 +31,8 @@ const Actualizar = () => {
       } else {
         Alert.alert('Sistema Actualizado', 'Ya cuentas con la versión más reciente del sistema.');
       }
-    } catch {
+    } catch (error) {
+      console.error(error);
       Alert.alert('Error de Mantenimiento', 'No se pudo verificar el estado de las actualizaciones.');
     } finally {
       setChecking(false);
