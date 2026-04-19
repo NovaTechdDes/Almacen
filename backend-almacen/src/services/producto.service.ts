@@ -12,10 +12,12 @@ export const obtenerProductos = async (): Promise<Articulos[]> => {
         a.marca, 
         a.precio, 
         a.cantidad, 
+        a.id_rubro,
         pm.id_precio,
         pm.cant_mayorista,
         pm.precio_mayorista
     FROM articulos a
+    INNER JOIN rubros r ON a.id_rubro = r.id_rubro
     INNER JOIN precios_mayoristas pm ON a.id_articulo = pm.id_articulo
     ORDER BY a.codigo
     `;
@@ -29,6 +31,7 @@ export const obtenerProductos = async (): Promise<Articulos[]> => {
         articulosMap.set(row.id_articulo, {
           id_articulo: row.id_articulo,
           codigo: row.codigo,
+          id_rubro: row.id_rubro,
           descripcion: row.descripcion,
           marca: row.marca,
           precio: row.precio,
