@@ -91,4 +91,11 @@ export const setupDatabase = async () => {
         FOREIGN KEY (id_pedido) REFERENCES pedidos(id_pedido) ON DELETE CASCADE,
         FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
       )`);
+
+  await conexion.execAsync(`
+        CREATE TABLE IF NOT EXISTS rubros (
+          id_rubro INTEGER PRIMARY KEY,
+          nom_rubro TEXT NOT NULL
+        )  
+      `);
 };

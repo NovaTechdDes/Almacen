@@ -5,7 +5,9 @@ import { querysGetPedidos } from '../db/querys';
 import { clienteMapperBackEnd } from '../mappers/cliente.mappers';
 import { pedidoMapperBackEnd } from '../mappers/pedido.mappers';
 import { productoMapper } from '../mappers/producto.mappers';
+import { rubroMapper } from '../mappers/rubros.mappers';
 import { actualizarProductos } from '../utils/actualizarProductos';
+import { actualizarRubros } from '../utils/actualizarRubros';
 import { descargarImagenes } from '../utils/descargarImagenes';
 
 const getServerUrl = async () => {
@@ -56,6 +58,7 @@ export const startPostSincronizar = async (): Promise<boolean> => {
 
 export const probarConexion = async () => {
   const url = await getServerUrl();
+  console.log(url);
   try {
     const { data } = await axios.get(`http://${url}/test`, { timeout: 1000 });
     return data;
@@ -74,11 +77,16 @@ export const startObtenerInformacion = async () => {
   try {
     const { data } = await axios.get(`http://${url}/obtener-datos`);
 
+    const rubros = data.data.rubros.map((rubro: any) => rubroMapper(rubro));
     const productos = data.data.productos.map((producto: any) => productoMapper(producto));
 
     if (data.data.productos && data.data.productos.length > 0) {
       const rutas = await descargarImagenes(productos);
       await actualizarProductos(productos, rutas);
+    }
+
+    if (data.data.rubros && data.data.rubros.length > 0) {
+      await actualizarRubros(rubros);
     }
 
     return data;

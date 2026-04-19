@@ -1,6 +1,7 @@
 import HeaderProductos from '@/src/components/productos/HeaderProductos';
 import ProductoItem from '@/src/components/productos/ProductoItem';
-import { Producto } from '@/src/interface';
+import { useRubros } from '@/src/hooks/rubros/useRubros';
+import { Producto, Rubro } from '@/src/interface';
 import { useProductoStore } from '@/src/store/producto.store';
 import React, { useEffect, useState } from 'react';
 import { FlatList, RefreshControl, Text } from 'react-native';
@@ -16,6 +17,7 @@ export default function ProductosScreen() {
   const limit = 20;
   const { buscador } = useProductoStore();
   const { data, isLoading, error, refetch } = useProductos(buscador, limit, offset);
+  const { data: rubros, isLoading: isLoadingRubros, error: errorRubros, refetch: refetchRubros } = useRubros();
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -58,7 +60,7 @@ export default function ProductosScreen() {
         data={productos}
         keyExtractor={(item) => item.codigo}
         numColumns={3}
-        ListHeaderComponent={<HeaderProductos data={data || []} />}
+        ListHeaderComponent={<HeaderProductos rubros={(rubros as Rubro[]) || []} data={data || []} />}
         contentContainerStyle={{ gap: 16, paddingBottom: 20 }}
         columnWrapperStyle={{ gap: 16 }}
         renderItem={({ item }) => <ProductoItem producto={item} />}
