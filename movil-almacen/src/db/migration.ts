@@ -16,6 +16,14 @@ export const setupDatabase = async () => {
   // }
 
   //Primero creamos la tabla de clientes ya que un pedido tiene que depender de un cliente
+
+  //Verificamos si existe la tabla email
+  try {
+    await conexion.execAsync(`ALTER TABLE clientes ADD COLUMN email TEXT`);
+  } catch (error) {
+    console.log('La columna email ya existe');
+  }
+
   await conexion.execAsync(`
         CREATE TABLE IF NOT EXISTS clientes (
             id_cliente INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -25,7 +33,8 @@ export const setupDatabase = async () => {
             direccion TEXT ,
             localidad TEXT ,
             fecha_registro DATE DEFAULT CURRENT_DATE,
-            id_servidor INTEGER UNIQUE
+            id_servidor INTEGER UNIQUE,
+            email TEXT
         )`);
 
   await conexion.execAsync(`

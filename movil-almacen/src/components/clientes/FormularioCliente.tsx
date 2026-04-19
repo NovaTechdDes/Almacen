@@ -23,6 +23,7 @@ export default function FormularioCliente() {
     }
 
     if (clienteSeleccionado) {
+      console.log(data);
       const res = await actualizarCliente.mutateAsync(data);
       if (res) {
         mensaje('success', 'Cliente actualizado', 'Cliente actualizado correctamente');
@@ -145,7 +146,7 @@ export default function FormularioCliente() {
                 </View>
 
                 {/* Direccion */}
-                <View className="mb-6 w-full">
+                <View className="mb-6 w-[48%]">
                   <View className="mb-2 flex-row items-center">
                     <Ionicons name="location-outline" size={18} color="#94a3b8" className="mr-2" />
                     <Text className="text-sm font-semibold text-slate-700 dark:text-slate-300">Dirección</Text>
@@ -166,7 +167,7 @@ export default function FormularioCliente() {
                 </View>
 
                 {/* Localidad */}
-                <View className="mb-8 w-full">
+                <View className="mb-8 w-[48%]">
                   <View className="mb-2 flex-row items-center">
                     <Ionicons name="map-outline" size={18} color="#94a3b8" className="mr-2" />
                     <Text className="text-sm font-semibold text-slate-700 dark:text-slate-300">Localidad / Ciudad</Text>
@@ -177,6 +178,26 @@ export default function FormularioCliente() {
                     render={({ field: { onChange, value } }) => (
                       <TextInput
                         placeholder="Ej: Posadas, Misiones"
+                        placeholderTextColor="#94a3b8"
+                        className="h-14 rounded-2xl border border-slate-200 bg-white px-5 text-base text-slate-900 shadow-sm focus:border-indigo-500 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                        value={value}
+                        onChangeText={onChange}
+                      />
+                    )}
+                  />
+                </View>
+                {/* Email */}
+                <View className="mb-8 w-full">
+                  <View className="mb-2 flex-row items-center">
+                    <Ionicons name="mail-outline" size={18} color="#94a3b8" className="mr-2" />
+                    <Text className="text-sm font-semibold text-slate-700 dark:text-slate-300">Email</Text>
+                  </View>
+                  <Controller
+                    control={control}
+                    name="email"
+                    render={({ field: { onChange, value } }) => (
+                      <TextInput
+                        placeholder="google@gmail.com.ar"
                         placeholderTextColor="#94a3b8"
                         className="h-14 rounded-2xl border border-slate-200 bg-white px-5 text-base text-slate-900 shadow-sm focus:border-indigo-500 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
                         value={value}

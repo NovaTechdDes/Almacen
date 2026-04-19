@@ -47,7 +47,7 @@ Flags: runhidden waituntilterminated
 
 ;Instalar Cloudflare
 Filename: "{tmp}\instaladores\cloudflared.exe"; \
-Parameters: "service install eyJhIjoiN2RjOGMzN2YzN2UyMDQ3MjE4ZGIxYWJmNmNhMDA1N2UiLCJ0IjoiZDQzNjkxMjEtNTc1Ny00NmExLWIwNGUtOGU1Nzk2ZmE4MjU2IiwicyI6IlpXWTBOelJqWVdVdE9ESmlaQzAwTUdVM0xXSmxZVFl0WldRM1l6Sm1PVFU0TWpObCJ9"; \
+Parameters: "service install --token eyJhIjoiN2RjOGMzN2YzN2UyMDQ3MjE4ZGIxYWJmNmNhMDA1N2UiLCJ0IjoiZDQzNjkxMjEtNTc1Ny00NmExLWIwNGUtOGU1Nzk2ZmE4MjU2IiwicyI6IlpXWTBOelJqWVdVdE9ESmlaQzAwTUdVM0xXSmxZVFl0WldRM1l6Sm1PVFU0TWpObCJ9"; \
 Flags: runhidden waituntilterminated 
 
 

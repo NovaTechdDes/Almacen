@@ -47,15 +47,15 @@ export default function ProductoItem({ producto }: Props) {
           {/* Unitario */}
           <View className="flex-row justify-between items-center">
             <Text className="text-slate-500 text-sm">Unitario</Text>
-            <Text className="text-blue-600 font-bold text-lg">$ {producto.precio?.toFixed(2) || 0}</Text>
+            <Text className="text-blue-600 font-bold text-md">$ {producto.precio?.toFixed(2) || 0}</Text>
           </View>
 
           {/* Mayoristas */}
           {producto.precios_mayoristas?.map((precio, index) => (
             <View className="flex-row justify-between items-center" key={precio.id_precio_mayorista}>
-              <Text className="text-slate-400 text-xs">Mayorista {index + 1}</Text>
-              <Text className="text-slate-400 text-xs">Cantd: {precio.cant_mayorista}</Text>
-              <Text className="text-emerald-600 font-semibold text-sm">$ {precio.precio_mayorista?.toFixed(2) || '0.00'}</Text>
+              <Text className="text-slate-400 text-lg">Mayorista {index + 1}</Text>
+              <Text className="text-slate-400 text-lg">Cant: {precio.cant_mayorista}</Text>
+              <Text className="text-emerald-600 font-semibold text-2xl">$ {precio.precio_mayorista?.toFixed(2) || '0.00'}</Text>
             </View>
           ))}
         </View>
