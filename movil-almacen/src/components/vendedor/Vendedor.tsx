@@ -3,10 +3,12 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
+import { useAppTheme } from '../../hooks';
 
 const Vendedor = () => {
   const [codigo, setCodigo] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const { colors } = useAppTheme();
 
   const handleUser = async () => {
     try {
@@ -49,6 +51,7 @@ const Vendedor = () => {
           <Text className="text-slate-500 dark:text-slate-400 text-sm mb-2">Codigo del vendedor</Text>
           <TextInput
             placeholder="Codigo del vendedor"
+            placeholderTextColor={colors.placeholder}
             value={codigo}
             onChangeText={setCodigo}
             className="border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white bg-white dark:bg-slate-800"
@@ -58,6 +61,7 @@ const Vendedor = () => {
           <Text className="text-slate-500 dark:text-slate-400 text-sm mb-2">Contraseña del vendedor</Text>
           <TextInput
             placeholder="Contraseña del vendedor"
+            placeholderTextColor={colors.placeholder}
             secureTextEntry
             value={password}
             onChangeText={setPassword}

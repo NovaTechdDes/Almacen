@@ -12,3 +12,7 @@
 
 1. ejecutar `eas build:configure`
 2. ejecutar `eas build --platform android --profile production`
+
+# Subir Actualizacion
+
+1. Ejecutar `eas update --channel preview --message ""`

@@ -44,8 +44,10 @@ export const startPostSincronizar = async (): Promise<boolean> => {
       // Sincronizamos el catálogo completo de productos y sus precios mayoristas
       // La función actualizarProductos ya maneja transacciones y lógica de UPSERT (Insert o Update)
       const productos = data.data.productos.map((p: any) => productoMapper(p));
+      const rubros = data.data.rubros.map((r: any) => rubroMapper(r));
       const rutas = await descargarImagenes(productos);
       await actualizarProductos(productos, rutas);
+      await actualizarRubros(rubros);
 
       return true;
     }

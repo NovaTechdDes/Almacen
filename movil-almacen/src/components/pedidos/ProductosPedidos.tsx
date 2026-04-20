@@ -1,14 +1,42 @@
 import { useProductos } from "@/src/hooks/productos/useProductos";
+import { Producto } from "@/src/interface";
 import { useProductoStore } from "@/src/store/producto.store";
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, TextInput, View } from "react-native";
 import Loading from "../ui/Loading";
 import PedidoItem from "./PedidoItem";
 
 export default function ProductosPedidos() {
+  const [productos, setProductos] = useState<Producto[]>([]);
   const { buscador, setBuscador } = useProductoStore();
-  const { data, isLoading } = useProductos(buscador);
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+
+  const limit = 20;
+  const { data, isLoading } = useProductos(buscador, limit, offset, 0);
+  const cargarMas = () => {
+    if (isLoading || !hasMore) return;
+
+    setOffset((prev) => prev + limit);
+  };
+
+    useEffect(() => {
+      if (!data) return;
+  
+      if (offset === 0) {
+        setProductos(data); // primera carga o búsqueda nueva
+        setHasMore(data.length === limit);
+      } else {
+        setProductos((prev) => [...prev, ...data]); // paginación
+        setHasMore(data.length === limit);
+      }
+    }, [data, offset]);
+
+      useEffect(() => {
+        setOffset(0);
+        setHasMore(true);
+      }, [buscador]);
 
   return (
     <View className="flex-1">
@@ -25,17 +53,20 @@ export default function ProductosPedidos() {
       </View>
 
       {/* Grid de Productos o Loading */}
-      {isLoading ? (
+      {isLoading && productos.length === 0 ? (
         <Loading texto="Cargando productos..." />
       ) : (
         <FlatList
-          data={data}
+          data={productos}
           renderItem={({ item }) => <PedidoItem producto={item} />}
           keyExtractor={(item) => item.id_producto.toString()}
           numColumns={2}
           columnWrapperStyle={{ gap: 16 }}
           contentContainerStyle={{ gap: 16, paddingBottom: 20 }}
           showsVerticalScrollIndicator={false}
+          onEndReached={cargarMas}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={ isLoading && productos.length > 0 ? <Loading texto="Cargando más productos..." /> : null}
         />
       )}
     </View>

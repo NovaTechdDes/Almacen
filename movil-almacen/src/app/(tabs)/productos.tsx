@@ -10,20 +10,21 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useProductos } from '../../hooks/productos/useProductos';
 
 export default function ProductosScreen() {
-  const [offset, setOffset] = useState(0);
   const [productos, setProductos] = useState<Producto[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
 
   const limit = 20;
   const { buscador, rubroSeleccionadoId } = useProductoStore();
   const { data, isLoading, error, refetch, isFetching } = useProductos(buscador, limit, offset, rubroSeleccionadoId ?? 0);
-  const { data: rubros, isLoading: isLoadingRubros } = useRubros();
+  const { data: rubros, isLoading: isLoadingRubros, refetch: refetchRubros } = useRubros();
 
   const onRefresh = async () => {
     setRefreshing(true);
     setOffset(0);
     await refetch();
+    await refetchRubros();
     setRefreshing(false);
   };
 
