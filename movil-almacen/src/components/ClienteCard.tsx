@@ -25,6 +25,7 @@ export const ClienteCard: React.FC<Props> = ({ cliente }) => {
 
   const handleDelete = async () => {
     try {
+      if (!cliente.id_cliente) return;
       const res = await eliminarCliente.mutateAsync(cliente?.id_cliente?.toString());
       if (res) {
         mensaje('success', 'Cliente eliminado', 'El cliente ha sido eliminado correctamente');

@@ -1,4 +1,5 @@
 import HeaderProductos from '@/src/components/productos/HeaderProductos';
+import { ListaEmpty } from '@/src/components/productos/ListaEmpty';
 import ProductoItem from '@/src/components/productos/ProductoItem';
 import { useRubros } from '@/src/hooks/rubros/useRubros';
 import { Producto, Rubro } from '@/src/interface';
@@ -15,9 +16,9 @@ export default function ProductosScreen() {
   const [hasMore, setHasMore] = useState(true);
 
   const limit = 20;
-  const { buscador } = useProductoStore();
-  const { data, isLoading, error, refetch } = useProductos(buscador, limit, offset);
-  const { data: rubros, isLoading: isLoadingRubros, error: errorRubros, refetch: refetchRubros } = useRubros();
+  const { buscador, rubroSeleccionadoId } = useProductoStore();
+  const { data, isLoading, error, refetch, isFetching } = useProductos(buscador, limit, offset, rubroSeleccionadoId ?? 0);
+  const { data: rubros, isLoading: isLoadingRubros } = useRubros();
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -47,22 +48,20 @@ export default function ProductosScreen() {
   useEffect(() => {
     setOffset(0);
     setHasMore(true);
-    setProductos([]);
-  }, [buscador]);
+  }, [buscador, rubroSeleccionadoId]);
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50 dark:bg-slate-950 p-5">
-      {isLoading && <Text>Cargando...</Text>}
-
       {error && <Text>Error al cargar productos</Text>}
 
       <FlatList
         data={productos}
         keyExtractor={(item) => item.codigo}
         numColumns={3}
-        ListHeaderComponent={<HeaderProductos rubros={(rubros as Rubro[]) || []} data={data || []} />}
-        contentContainerStyle={{ gap: 16, paddingBottom: 20 }}
+        ListHeaderComponent={<HeaderProductos isLoading={isLoadingRubros} rubros={(rubros as Rubro[]) || []} data={data || []} />}
+        contentContainerStyle={{ flexGrow: 1, gap: 16, paddingBottom: 20 }}
         columnWrapperStyle={{ gap: 16 }}
+        ListEmptyComponent={<ListaEmpty data={productos} isLoading={isLoading} isFetching={isFetching} buscador={buscador} />}
         renderItem={({ item }) => <ProductoItem producto={item} />}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         onEndReached={cargarMas}

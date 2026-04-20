@@ -23,7 +23,6 @@ export default function FormularioCliente() {
     }
 
     if (clienteSeleccionado) {
-      console.log(data);
       const res = await actualizarCliente.mutateAsync(data);
       if (res) {
         mensaje('success', 'Cliente actualizado', 'Cliente actualizado correctamente');

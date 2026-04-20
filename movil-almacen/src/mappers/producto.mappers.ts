@@ -3,6 +3,7 @@ interface ProductoBackEnd {
   codigo: string;
   descripcion: string;
   marca: string;
+  id_rubro: number;
   precio: number;
   cantidad: number;
   imagenURL: string;
@@ -19,6 +20,7 @@ export const productoMapper = (producto: ProductoBackEnd) => {
     descripcion: producto.descripcion,
     codigo: producto.codigo,
     precio: producto.precio ?? 0,
+    id_rubro: producto.id_rubro,
     stock: producto.cantidad ?? 0,
     id_articulo: producto.id_articulo,
     imagen_local: producto.imagenURL,

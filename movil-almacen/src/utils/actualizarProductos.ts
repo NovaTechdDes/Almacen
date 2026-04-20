@@ -16,17 +16,18 @@ export const actualizarProductos = async (productos: any[], rutas?: string[]) =>
         // Usamos ON CONFLICT para que si el id_servidor ya existe, solo actualice los datos.
         // RETURNING nos devuelve el id_producto local generado o existente.
         await db.runAsync(
-          `INSERT INTO productos (descripcion, codigo, precio, stock, id_producto, imagen_local) 
-          VALUES (?, ?, ?, ?, ?, ?) 
+          `INSERT INTO productos (descripcion, codigo, precio, id_rubro, stock, id_producto, imagen_local) 
+          VALUES (?, ?, ?, ?, ?, ?, ?) 
           ON CONFLICT(id_producto) DO UPDATE SET 
           descripcion = excluded.descripcion,
           codigo = excluded.codigo,
           precio = excluded.precio,
+          id_rubro = excluded.id_rubro,
           stock = excluded.stock,
           id_producto = excluded.id_producto,
           imagen_local = excluded.imagen_local`,
 
-          [producto.descripcion, producto.codigo, producto.precio, producto.stock, producto.id_articulo, imagenLocal]
+          [producto.descripcion, producto.codigo, producto.precio, producto.id_rubro, producto.stock, producto.id_articulo, imagenLocal]
         );
 
         // 2️⃣ Obtenemos el id local por separado

@@ -21,7 +21,13 @@ export const setupDatabase = async () => {
   try {
     await conexion.execAsync(`ALTER TABLE clientes ADD COLUMN email TEXT`);
   } catch (error) {
-    console.log('La columna email ya existe');
+    console.info('La columna email ya existe');
+  }
+
+  try {
+    await conexion.execAsync(`ALTER TABLE productos ADD COLUMN id_rubro INTEGER`);
+  } catch (error) {
+    console.info('La columna id_rubro ya existe');
   }
 
   await conexion.execAsync(`

@@ -30,11 +30,18 @@ export default function ProductoItem({ producto }: Props) {
       {/* Parte Inferior: Información */}
       <View className="p-4 gap-2">
         {/* Código y Meta */}
-        <View className="flex-row items-center gap-2">
-          <Ionicons name="barcode-outline" size={14} color="#94a3b8" />
-          <Text className="text-xs text-slate-400 font-medium uppercase tracking-wider" numberOfLines={1}>
-            {producto.codigo}
-          </Text>
+        <View className="flex-row items-center gap-2 justify-between">
+          <View className="flex-row gap-2">
+            <Ionicons name="barcode-outline" size={14} color="#94a3b8" />
+            <Text className="text-xs text-slate-900 dark:text-white font-medium uppercase tracking-wider" numberOfLines={1}>
+              {producto.codigo}
+            </Text>
+          </View>
+          <View className="bg-blue-500 p-2 rounded-full text-white text-xl">
+            <Text className=" text-white font-medium uppercase tracking-wider" numberOfLines={1}>
+              {producto.rubro?.nom_rubro}
+            </Text>
+          </View>
         </View>
 
         {/* Descripción */}

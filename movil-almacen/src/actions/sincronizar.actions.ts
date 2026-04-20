@@ -58,7 +58,7 @@ export const startPostSincronizar = async (): Promise<boolean> => {
 
 export const probarConexion = async () => {
   const url = await getServerUrl();
-  console.log(url);
+
   try {
     const { data } = await axios.get(`http://${url}/test`, { timeout: 1000 });
     return data;

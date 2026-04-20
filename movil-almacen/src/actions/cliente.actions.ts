@@ -32,7 +32,6 @@ export const postCliente = async (cliente: Cliente): Promise<boolean> => {
 
 export const startPutCliente = async (cliente: Cliente) => {
   const db = await getDb();
-  console.log(cliente);
   try {
     await db.runAsync(`UPDATE clientes SET denominacion = ?, dni = ?, telefono = ?, direccion = ?, localidad = ?, email = ? WHERE id_cliente = ?`, [
       cliente.denominacion,
