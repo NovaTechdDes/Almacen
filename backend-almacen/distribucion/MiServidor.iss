@@ -3,7 +3,7 @@
 ; ==============================
 [Setup]
 AppName=ServidorAlmacen
-AppVersion=1.0.1
+AppVersion=1.0.2
 DefaultDirName={commonappdata}\ServidorAlmacen
 DefaultGroupName=ServidorAlmacen
 OutputDir=output
@@ -50,6 +50,10 @@ Filename: "{tmp}\instaladores\cloudflared.exe"; \
 Parameters: "service install --token eyJhIjoiN2RjOGMzN2YzN2UyMDQ3MjE4ZGIxYWJmNmNhMDA1N2UiLCJ0IjoiZDQzNjkxMjEtNTc1Ny00NmExLWIwNGUtOGU1Nzk2ZmE4MjU2IiwicyI6IlpXWTBOelJqWVdVdE9ESmlaQzAwTUdVM0xXSmxZVFl0WldRM1l6Sm1PVFU0TWpObCJ9"; \
 Flags: runhidden waituntilterminated 
 
+; Configurar inicio automático
+Filename: "sc.exe"; \
+Parameters: "config cloudflared start= delayed-auto"; \
+Flags: runhidden waituntilterminated
 
 ; Logs
 Filename: "{app}\nssm.exe"; \
