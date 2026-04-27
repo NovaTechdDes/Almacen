@@ -43,7 +43,7 @@ export const getProductos = async (buscador: string, limit: number = 20, offset:
   }
 };
 
-export const getProductosForRubro = async (rubroId: number): Promise<Producto[]> => {
+export const getProductosForRubro = async (rubroId: number, buscador: string): Promise<Producto[]> => {
   const db = await getDb();
   try {
     const filas = (await db.getAllAsync(
@@ -68,9 +68,9 @@ export const getProductosForRubro = async (rubroId: number): Promise<Producto[]>
           )
         ) FROM precios_mayorista WHERE id_articulo = p.id_producto) as precios_mayoristas
       FROM productos p
-      WHERE p.id_rubro = ?
+      WHERE (p.descripcion LIKE ? OR p.codigo LIKE ?) AND p.id_rubro = ?
       ORDER BY p.descripcion;`,
-      [rubroId]
+      [`%${buscador}%`, `%${buscador}%`, rubroId]
     )) as any[];
 
     return filas.map((fila) => ({

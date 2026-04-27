@@ -4,15 +4,14 @@ import { useRubros } from '@/src/hooks/rubros/useRubros';
 import { Rubro } from '@/src/interface';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { FlatList, SafeAreaView, Text, TextInput, View } from 'react-native';
+import { FlatList, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function RubrosScreen() {
   const { data: rubros, isLoading, error } = useRubros();
   const [search, setSearch] = useState('');
 
-  const filteredRubros = rubros?.filter((r) =>
-    r.nom_rubro.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredRubros = rubros?.filter((r) => r.nom_rubro.toLowerCase().includes(search.toLowerCase()));
 
   if (isLoading) {
     return <Loading texto="Cargando Rubros" />;
@@ -52,12 +51,8 @@ const HeaderList = ({ search, setSearch }: HeaderProps) => {
   return (
     <View className="mt-6 mb-4">
       <View className="mb-6">
-        <Text className="text-slate-900 dark:text-white text-3xl font-black tracking-tight">
-          Categorías
-        </Text>
-        <Text className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-          Organiza y encuentra productos rápidamente
-        </Text>
+        <Text className="text-slate-900 dark:text-white text-3xl font-black tracking-tight">Categorías</Text>
+        <Text className="text-slate-500 dark:text-slate-400 text-sm mt-1">Organiza y encuentra productos rápidamente</Text>
       </View>
 
       <View className="relative">

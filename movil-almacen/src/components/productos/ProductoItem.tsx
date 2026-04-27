@@ -1,17 +1,24 @@
 import { Producto } from '@/src/interface';
+import { usePedidoStore } from '@/src/store/pedido.store';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 interface Props {
   producto: Producto;
 }
 
 export default function ProductoItem({ producto }: Props) {
+  const { addItem } = usePedidoStore();
+
+  const handleAddCart = () => {
+    addItem(producto);
+  };
+
   return (
     <View className="flex-1 rounded-3xl bg-white dark:bg-slate-900 border border-gray-500 dark:border-gray-800 shadow-sm overflow-hidden">
       {/* Parte Superior: Imagen y Badges */}
-      <View className="h-44 w-full bg-slate-100 dark:bg-slate-800 items-center justify-center relative">
+      <TouchableOpacity onPress={handleAddCart} className="h-44 w-full bg-slate-100 dark:bg-slate-800 items-center justify-center relative">
         {producto.imagen_local ? (
           <Image className="h-full w-full" resizeMode="contain" source={{ uri: producto.imagen_local }} />
         ) : (
@@ -25,7 +32,7 @@ export default function ProductoItem({ producto }: Props) {
         <View className="absolute top-3 left-3 bg-blue-600 px-3 py-1 rounded-full">
           <Text className="text-white text-xs font-bold">Stock: {producto.stock}</Text>
         </View>
-      </View>
+      </TouchableOpacity>
 
       {/* Parte Inferior: Información */}
       <View className="p-4 gap-2">

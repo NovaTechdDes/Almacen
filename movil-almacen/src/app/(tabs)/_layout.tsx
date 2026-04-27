@@ -1,12 +1,14 @@
-import { useAppTheme } from "@/src/hooks";
-import { Ionicons } from "@expo/vector-icons";
-import { Tabs } from "expo-router";
-import React from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useAppTheme } from '@/src/hooks';
+import { usePedidoStore } from '@/src/store/pedido.store';
+import { Ionicons } from '@expo/vector-icons';
+import { Tabs } from 'expo-router';
+import React from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const LayoutScreen = () => {
-  const { isDark, colors } = useAppTheme();
+  const { colors } = useAppTheme();
   const insets = useSafeAreaInsets();
+  const { items } = usePedidoStore();
   return (
     <Tabs
       screenOptions={{
@@ -26,57 +28,38 @@ const LayoutScreen = () => {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Pedidos",
+          title: 'Pedidos',
           headerShown: false,
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "list" : "list-outline"}
-              color={color}
-              size={24}
-            />
-          ),
+          tabBarBadge: items.length > 0 ? items.length : undefined,
+          tabBarBadgeStyle: {
+            backgroundColor: colors.accent,
+            color: 'white',
+          },
+          tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'list' : 'list-outline'} color={color} size={24} />,
         }}
       />
       <Tabs.Screen
         name="productos"
         options={{
-          title: "Productos",
+          title: 'Productos',
           headerShown: false,
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "cube" : "cube-outline"}
-              color={color}
-              size={24}
-            />
-          ),
+          tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'cube' : 'cube-outline'} color={color} size={24} />,
         }}
       />
       <Tabs.Screen
         name="clientes"
         options={{
-          title: "Clientes",
+          title: 'Clientes',
           headerShown: false,
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "people" : "people-outline"}
-              color={color}
-              size={24}
-            />
-          ),
+          tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'people' : 'people-outline'} color={color} size={24} />,
         }}
       />
       <Tabs.Screen
         name="sincronizar"
         options={{
-          title: "Sincronizar",
+          title: 'Sincronizar',
           headerShown: false,
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "sync" : "sync-outline"}
-              color={color}
-              size={24}
-            />
-          ),
+          tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'sync' : 'sync-outline'} color={color} size={24} />,
         }}
       />
     </Tabs>

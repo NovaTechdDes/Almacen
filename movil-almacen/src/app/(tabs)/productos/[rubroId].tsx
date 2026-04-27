@@ -1,8 +1,8 @@
 import HeaderProductos from '@/src/components/productos/HeaderProductos';
 import { ListaEmpty } from '@/src/components/productos/ListaEmpty';
 import ProductoItem from '@/src/components/productos/ProductoItem';
-import Loading from '@/src/components/ui/Loading';
 import { useProductoForRubro } from '@/src/hooks/productos/useProductos';
+import { useProductoStore } from '@/src/store/producto.store';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import { FlatList, RefreshControl, Text, View } from 'react-native';
@@ -12,17 +12,14 @@ export default function ProductosPorRubro() {
   const { rubroId } = useLocalSearchParams();
   const [refreshing, setRefreshing] = useState(false);
 
-  const { data: productos, isLoading, error, isFetching, refetch } = useProductoForRubro(Number(rubroId));
+  const { buscador } = useProductoStore();
+  const { data: productos, isLoading, error, isFetching, refetch } = useProductoForRubro(Number(rubroId), buscador);
 
   const onRefresh = async () => {
     setRefreshing(true);
     await refetch();
     setRefreshing(false);
   };
-
-  if (isLoading) {
-    return <Loading texto="Cargando productos" />;
-  }
 
   if (error) {
     return (
@@ -44,7 +41,7 @@ export default function ProductosPorRubro() {
         ListHeaderComponent={<HeaderProductos data={productos || []} />}
         contentContainerStyle={{ flexGrow: 1, gap: 16, paddingBottom: 20 }}
         columnWrapperStyle={{ gap: 16 }}
-        ListEmptyComponent={<ListaEmpty data={productos} isLoading={isLoading} isFetching={isFetching} />}
+        ListEmptyComponent={<ListaEmpty buscador={buscador} data={productos || []} isLoading={isLoading} isFetching={isFetching} />}
         renderItem={({ item }) => <ProductoItem producto={item} />}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       />

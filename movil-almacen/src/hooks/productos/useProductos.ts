@@ -8,9 +8,9 @@ export const useProductos = (buscador: string, limit: number, offset: number, ru
   });
 };
 
-export const useProductoForRubro = (rubroId: number) => {
+export const useProductoForRubro = (rubroId: number, buscador: string) => {
   return useQuery({
-    queryKey: ['productos', rubroId],
-    queryFn: () => getProductosForRubro(rubroId),
+    queryKey: ['productos', rubroId, buscador],
+    queryFn: () => getProductosForRubro(rubroId, buscador),
   });
 };
