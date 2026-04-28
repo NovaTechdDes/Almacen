@@ -31,7 +31,7 @@ export default function RubrosScreen() {
       <FlatList
         data={filteredRubros}
         ListHeaderComponent={<HeaderList search={search} setSearch={setSearch} />}
-        renderItem={({ item }: { item: Rubro }) => <RubroCard rubro={item} />}
+        renderItem={({ item, index }: { item: Rubro; index: number }) => <RubroCard rubro={item} index={index} />}
         keyExtractor={(item: Rubro) => item.id_rubro.toString()}
         numColumns={3}
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}

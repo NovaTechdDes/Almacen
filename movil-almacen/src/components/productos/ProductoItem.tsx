@@ -1,5 +1,6 @@
 import { Producto } from '@/src/interface';
 import { usePedidoStore } from '@/src/store/pedido.store';
+import { mensaje } from '@/src/utils/mensaje';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
@@ -12,6 +13,7 @@ export default function ProductoItem({ producto }: Props) {
   const { addItem } = usePedidoStore();
 
   const handleAddCart = () => {
+    mensaje('success', 'Producto agregado al carrito');
     addItem(producto);
   };
 

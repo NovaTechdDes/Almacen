@@ -10,12 +10,12 @@ import ProductosPedidos from './ProductosPedidos';
 import TotalPedido from './TotalPedido';
 
 const ModalPedido = () => {
-  const { clearPedido, setCliente, cliente } = usePedidoStore();
+  const { toggleModal, setCliente, cliente } = usePedidoStore();
   const { data: clientes, isLoading } = useClientes();
   const { isDark } = useAppTheme();
 
   const handleClearCarrito = () => {
-    clearPedido();
+    toggleModal();
   };
 
   if (isLoading) return <Loading texto="Cargando clientes..." />;
