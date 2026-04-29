@@ -1,8 +1,9 @@
 import { Producto } from '@/src/interface';
 import { usePedidoStore } from '@/src/store/pedido.store';
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useState } from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
+import ToastNumber from '../ui/ToastNumber';
 
 interface Props {
   producto: Producto;
@@ -10,14 +11,26 @@ interface Props {
 
 export default function PedidoItem({ producto }: Props) {
   const { addItem } = usePedidoStore();
+  const [cantidad, setCantidad] = useState('1');
+  const [show, setShow] = useState(false);
 
   const handleAddItemCarrito = () => {
     addItem(producto);
   };
 
+  const handleLongPress = () => {
+    setShow(true);
+  };
+
+  const handleConfirm = () => {
+    addItem(producto, Number(cantidad));
+    setShow(false);
+  };
+
   return (
     <Pressable
       onPress={handleAddItemCarrito}
+      onLongPress={handleLongPress}
       style={({ pressed }) => ({
         opacity: pressed ? 0.9 : 1,
         transform: [{ scale: pressed ? 0.98 : 1 }],
@@ -47,6 +60,15 @@ export default function PedidoItem({ producto }: Props) {
           <View className={`ml-2 p-2 rounded-full ${pressed ? 'bg-slate-200 dark:bg-slate-600' : 'bg-slate-50 dark:bg-slate-700'}`}>
             <Ionicons name="add" size={24} color="#64748b" />
           </View>
+          <ToastNumber
+            visible={show}
+            cantidad={cantidad}
+            setCantidad={setCantidad}
+            onConfirm={handleConfirm}
+            onCancel={() => {
+              setShow(false);
+            }}
+          />
         </>
       )}
     </Pressable>

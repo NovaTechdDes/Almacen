@@ -6,7 +6,7 @@ export interface PedidoStore {
   toggleModal: () => void;
 
   items: ProductoCarrito[];
-  addItem: (producto: Producto | ProductoCarrito) => void;
+  addItem: (producto: Producto | ProductoCarrito, cantidad?: number) => void;
   removeItem: (producto: ProductoCarrito) => void;
   substractItem: (producto: ProductoCarrito) => void;
 
@@ -25,12 +25,12 @@ export const usePedidoStore = create<PedidoStore>((set) => ({
   toggleModal: () => set((state) => ({ modalOpen: !state.modalOpen })),
 
   items: [],
-  addItem: (producto: Producto | ProductoCarrito) =>
+  addItem: (producto: Producto | ProductoCarrito, cantidad: number = 1) =>
     set((state) => {
       const productoCarrito = state.items.find((item) => item.id_producto === producto.id_producto);
       if (productoCarrito) {
         const precio = productoCarrito.precios_mayoristas
-          ?.filter((pm) => pm.cant_mayorista && productoCarrito.cantidad + 1 >= pm.cant_mayorista && pm.id_articulo === productoCarrito.id_producto)
+          ?.filter((pm) => pm.cant_mayorista && productoCarrito.cantidad + cantidad >= pm.cant_mayorista && pm.id_articulo === productoCarrito.id_producto)
           .sort((a, b) => b.cant_mayorista - a.cant_mayorista)
           .at(0);
 
@@ -39,7 +39,7 @@ export const usePedidoStore = create<PedidoStore>((set) => ({
             ? {
                 ...item,
                 precioAux: precio ? precio?.precio_mayorista : item.precio,
-                cantidad: item.cantidad + 1,
+                cantidad: item.cantidad + cantidad,
               }
             : item
         );
@@ -50,7 +50,7 @@ export const usePedidoStore = create<PedidoStore>((set) => ({
           total,
         };
       } else {
-        const updateItems = [...state.items, { ...producto, precioAux: producto.precio, cantidad: 1 }];
+        const updateItems = [...state.items, { ...producto, precioAux: producto.precio, cantidad }];
         const total = updateItems.reduce((acc, item) => acc + item.precioAux * item.cantidad, 0);
         return {
           items: updateItems,
