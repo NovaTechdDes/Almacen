@@ -1,8 +1,10 @@
 import { ProductoCarrito } from '@/src/interface';
 import { usePedidoStore } from '@/src/store/pedido.store';
+import { mensaje } from '@/src/utils/mensaje';
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { Image, Pressable, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
+import ToastNumber from '../ui/ToastNumber';
 
 interface CarritoPedidoItemProps {
   item: ProductoCarrito;
@@ -10,6 +12,19 @@ interface CarritoPedidoItemProps {
 
 const CarritoPedidoItem = ({ item }: CarritoPedidoItemProps) => {
   const { removeItem, addItem, substractItem } = usePedidoStore();
+  const [show, setShow] = useState(false);
+  const [cantidad, setCantidad] = useState('1');
+
+  const handleLongPress = () => {
+    setShow(true);
+  };
+
+  const handleConfirm = () => {
+    mensaje('success', `Producto agregado al carrito con la cantidad: ${cantidad}`);
+    addItem(item, Number(cantidad));
+    setCantidad('1');
+    setShow(false);
+  };
 
   const handleRemoveItem = () => {
     removeItem(item);
@@ -24,7 +39,7 @@ const CarritoPedidoItem = ({ item }: CarritoPedidoItemProps) => {
   };
 
   return (
-    <View className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-3xl p-4 shadow-sm shadow-slate-100 dark:shadow-none">
+    <TouchableOpacity onLongPress={handleLongPress} className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-3xl p-4 shadow-sm shadow-slate-100 dark:shadow-none">
       <View className="flex-row items-center mb-4">
         {/* Miniatura */}
         <View className="h-12 w-12 bg-slate-50 dark:bg-slate-700 rounded-xl items-center justify-center mr-3">
@@ -86,7 +101,17 @@ const CarritoPedidoItem = ({ item }: CarritoPedidoItemProps) => {
           </Text>
         </View>
       </View>
-    </View>
+
+      <ToastNumber
+        visible={show}
+        cantidad={cantidad}
+        setCantidad={setCantidad}
+        onConfirm={handleConfirm}
+        onCancel={() => {
+          setShow(false);
+        }}
+      />
+    </TouchableOpacity>
   );
 };
 

@@ -1,12 +1,12 @@
-import { useMutatePedidos } from "@/src/hooks/pedidos/useMutatePedido";
-import { Pedido } from "@/src/interface";
-import { fechaHora } from "@/src/utils/fecha";
-import { mensaje } from "@/src/utils/mensaje";
-import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
-import { Pressable, Text, View } from "react-native";
-import ToastConfirmacion from "../ui/ToastConfirmacion";
-import ProductoPedidoCard from "./ProductoPedidoCard";
+import { useMutatePedidos } from '@/src/hooks/pedidos/useMutatePedido';
+import { Pedido } from '@/src/interface';
+import { fechaHora } from '@/src/utils/fecha';
+import { mensaje } from '@/src/utils/mensaje';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { Pressable, Text, View } from 'react-native';
+import ToastConfirmacion from '../ui/ToastConfirmacion';
+import ProductoPedidoCard from './ProductoPedidoCard';
 
 interface Props {
   item: Pedido;
@@ -23,9 +23,9 @@ export default function PedidoCard({ item }: Props) {
 
     if (res) {
       setShowToast(false);
-      mensaje("success", "Pedido eliminado correctamente");
+      mensaje('success', 'Pedido eliminado correctamente');
     } else {
-      mensaje("error", "Error al eliminar el pedido");
+      mensaje('error', 'Error al eliminar el pedido');
     }
   };
 
@@ -40,10 +40,8 @@ export default function PedidoCard({ item }: Props) {
         <View>
           {/* Numero de pedido y estado */}
           <View className="flex-row gap-2">
-            <Text className="text-lg font-bold dark:text-white">
-              Pedido: {item?.id_pedido?.toString().padStart(4, "0")}
-            </Text>
-            {item?.estado === "PENDIENTE" ? (
+            <Text className="text-lg font-bold dark:text-white">Pedido: {item?.id_pedido?.toString().padStart(4, '0')}</Text>
+            {item?.estado === 'PENDIENTE' ? (
               <View className="flex-row items-center gap-2 text-sm bg-orange-300/20 px-2 py-1 rounded-full">
                 <Ionicons name="time-outline" size={16} color="#ea580c" />
                 <Text className=" text-orange-600">{item?.estado}</Text>
@@ -60,9 +58,7 @@ export default function PedidoCard({ item }: Props) {
           <View className="flex-row gap-5 mt-2">
             <View className="flex-row items-center gap-2 text-sm  px-2 py-1 rounded-full">
               <Ionicons name="person-outline" size={16} color="gray" />
-              <Text className="text-gray-500">
-                {item?.cliente?.denominacion}
-              </Text>
+              <Text className="text-gray-500">{item?.cliente?.denominacion}</Text>
             </View>
             <View className="flex-row items-center gap-2 text-sm  px-2 py-1 rounded-full">
               <Ionicons name="calendar-outline" size={16} color="gray" />
@@ -75,12 +71,10 @@ export default function PedidoCard({ item }: Props) {
         <View className="ml-auto flex-row items-center gap-2">
           <View className="gap-2 text-sm  px-2 py-1 rounded-full">
             <Text className="text-lg font-bold dark:text-slate-300">Total</Text>
-            <Text className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-              ${item?.importe.toFixed(2)}
-            </Text>
+            <Text className="text-2xl font-bold text-blue-600 dark:text-blue-400">${item?.importe.toFixed(2)}</Text>
           </View>
 
-          {item.estado === "PENDIENTE" && (
+          {item.estado === 'PENDIENTE' && (
             <Pressable onPress={() => setShowToast(true)} className="ml-auto">
               <Ionicons name="trash-outline" size={24} color="red" />
             </Pressable>
@@ -91,9 +85,7 @@ export default function PedidoCard({ item }: Props) {
       {/* Productos */}
       <View className="border-t border-gray-500 dark:border-slate-700 mt-5 pt-5">
         <View>
-          <Text className="text-xl text-gray-500 dark:text-slate-400">
-            {item?.items?.length || 0} Productos
-          </Text>
+          <Text className="text-xl text-gray-500 dark:text-slate-400">{item?.items?.length || 0} Productos</Text>
         </View>
 
         <View className="mt-5 flex-row gap-5">
@@ -103,14 +95,7 @@ export default function PedidoCard({ item }: Props) {
         </View>
       </View>
 
-      {showToast && (
-        <ToastConfirmacion
-          visible={showToast}
-          mensaje="¿Estás seguro de eliminar este Pedido?"
-          onConfirm={handleDelete}
-          onCancel={() => setShowToast(false)}
-        />
-      )}
+      {showToast && <ToastConfirmacion visible={showToast} mensaje="¿Estás seguro de eliminar este Pedido?" onConfirm={handleDelete} onCancel={() => setShowToast(false)} />}
     </View>
   );
 }

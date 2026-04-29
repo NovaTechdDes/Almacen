@@ -2,8 +2,9 @@ import { Producto } from '@/src/interface';
 import { usePedidoStore } from '@/src/store/pedido.store';
 import { mensaje } from '@/src/utils/mensaje';
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
+import ToastNumber from '../ui/ToastNumber';
 
 interface Props {
   producto: Producto;
@@ -11,16 +12,29 @@ interface Props {
 
 export default function ProductoItem({ producto }: Props) {
   const { addItem } = usePedidoStore();
+  const [show, setShow] = useState(false);
+  const [cantidad, setCantidad] = useState('1');
 
   const handleAddCart = () => {
     mensaje('success', 'Producto agregado al carrito');
     addItem(producto);
   };
 
+  const handleLongPress = () => {
+    setShow(true);
+  };
+
+  const handleConfirm = () => {
+    mensaje('success', `Producto agregado al carrito con la cantidad: ${cantidad}`);
+    addItem(producto, Number(cantidad));
+    setCantidad('1');
+    setShow(false);
+  };
+
   return (
     <View className="flex-1 rounded-3xl bg-white dark:bg-slate-900 border border-gray-500 dark:border-gray-800 shadow-sm overflow-hidden">
       {/* Parte Superior: Imagen y Badges */}
-      <TouchableOpacity onPress={handleAddCart} className="h-44 w-full bg-slate-100 dark:bg-slate-800 items-center justify-center relative">
+      <TouchableOpacity onLongPress={handleLongPress} onPress={handleAddCart} className="h-44 w-full bg-slate-100 dark:bg-slate-800 items-center justify-center relative">
         {producto.imagen_local ? (
           <Image className="h-full w-full" resizeMode="contain" source={{ uri: producto.imagen_local }} />
         ) : (
@@ -76,6 +90,15 @@ export default function ProductoItem({ producto }: Props) {
           ))}
         </View>
       </View>
+      <ToastNumber
+        visible={show}
+        cantidad={cantidad}
+        setCantidad={setCantidad}
+        onConfirm={handleConfirm}
+        onCancel={() => {
+          setShow(false);
+        }}
+      />
     </View>
   );
 }

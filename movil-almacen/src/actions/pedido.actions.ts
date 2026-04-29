@@ -1,11 +1,16 @@
 import { getDb } from '../db/db';
 import { querysGetPedidos } from '../db/querys';
 import { Pedido } from '../interface/Pedido';
+import { finDia, inicioDia } from '../utils/fecha';
 
 export const getPedidos = async (fecha: string): Promise<Pedido[]> => {
   const db = await getDb();
+
+  const init = inicioDia();
+  const fin = finDia();
+
   try {
-    const resultado = (await db.getAllAsync(`${querysGetPedidos}  WHERE DATE(fecha) = ? ORDER BY id_pedido DESC`, [fecha])) as any[];
+    const resultado = (await db.getAllAsync(`${querysGetPedidos}  WHERE fecha BETWEEN ? AND ? ORDER BY id_pedido DESC`, [init, fin])) as any[];
 
     return resultado.map((pedido) => ({
       ...pedido,

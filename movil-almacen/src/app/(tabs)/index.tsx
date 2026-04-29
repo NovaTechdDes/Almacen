@@ -40,13 +40,7 @@ export default function Pedido() {
   };
 
   const handleClose = async () => {
-    const user = await AsyncStorage.getItem('@user');
-
-    if (user) {
-      setUserActive(JSON.parse(user));
-    } else {
-      router.replace('/(tabs)/sincronizar');
-    }
+    router.replace('/(tabs)/sincronizar');
     setModalVisible(false);
     setError(false);
   };
