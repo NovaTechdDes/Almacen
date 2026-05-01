@@ -82,10 +82,14 @@ export default function ProductoItem({ producto }: Props) {
 
           {/* Mayoristas */}
           {producto.precios_mayoristas?.map((precio, index) => (
-            <View className="flex-row justify-between items-center" key={precio.id_precio_mayorista}>
-              <Text className="text-slate-400 text-lg">Mayorista {index + 1}</Text>
-              <Text className="text-slate-400 text-lg">Cant: {precio.cant_mayorista}</Text>
-              <Text className="text-emerald-600 font-semibold text-2xl">$ {precio.precio_mayorista?.toFixed(2) || '0.00'}</Text>
+            <View className="flex-row justify-between items-center flex-wrap gap-x-1" key={precio.id_precio_mayorista}>
+              <View className="flex-row items-center gap-1 shrink">
+                <Text className="text-slate-400 text-xs sm:text-sm font-medium" adjustsFontSizeToFit numberOfLines={1}>May. {index + 1}</Text>
+                <Text className="text-slate-400 text-xs sm:text-sm font-medium" adjustsFontSizeToFit numberOfLines={1}>({precio.cant_mayorista}u)</Text>
+              </View>
+              <Text className="text-emerald-600 font-semibold text-base sm:text-lg shrink" adjustsFontSizeToFit numberOfLines={1}>
+                $ {precio.precio_mayorista?.toFixed(2) || '0.00'}
+              </Text>
             </View>
           ))}
         </View>

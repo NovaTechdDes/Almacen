@@ -16,3 +16,7 @@
 # Subir Actualizacion
 
 1. Ejecutar `eas update --channel preview --message ""`
+
+# Configurar Variables de entorno
+
+1. Ejecutar `eas env:create`
