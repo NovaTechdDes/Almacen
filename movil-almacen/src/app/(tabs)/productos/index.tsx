@@ -2,16 +2,25 @@ import { RubroCard } from '@/src/components/rubros/RubroCard';
 import Loading from '@/src/components/ui/Loading';
 import { useRubros } from '@/src/hooks/rubros/useRubros';
 import { Rubro } from '@/src/interface';
+import { exportarCatalogoPdf } from '@/src/utils/generarHtmlCatalogo';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { FlatList, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function RubrosScreen() {
   const { data: rubros, isLoading, error } = useRubros();
   const [search, setSearch] = useState('');
+  const [isExporting, setIsExporting] = useState(false);
 
   const filteredRubros = rubros?.filter((r) => r.nom_rubro.toLowerCase().includes(search.toLowerCase()));
+
+  const handleExportPdf = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    await exportarCatalogoPdf();
+    setIsExporting(false);
+  };
 
   if (isLoading) {
     return <Loading texto="Cargando Rubros" />;
@@ -30,7 +39,7 @@ export default function RubrosScreen() {
     <SafeAreaView className="flex-1 bg-white dark:bg-slate-950">
       <FlatList
         data={filteredRubros}
-        ListHeaderComponent={<HeaderList search={search} setSearch={setSearch} />}
+        ListHeaderComponent={<HeaderList isExporting={isExporting} onExportPdf={handleExportPdf} search={search} setSearch={setSearch} />}
         renderItem={({ item, index }: { item: Rubro; index: number }) => <RubroCard rubro={item} index={index} />}
         keyExtractor={(item: Rubro) => item.id_rubro.toString()}
         numColumns={3}
@@ -45,15 +54,22 @@ export default function RubrosScreen() {
 interface HeaderProps {
   search: string;
   setSearch: (text: string) => void;
+  isExporting: boolean;
+  onExportPdf: () => void;
 }
 
-const HeaderList = ({ search, setSearch }: HeaderProps) => {
+const HeaderList = ({ search, setSearch, isExporting, onExportPdf }: HeaderProps) => {
   return (
     <View className="mt-6 mb-4">
       <View className="mb-6">
         <Text className="text-slate-900 dark:text-white text-3xl font-black tracking-tight">Categorías</Text>
         <Text className="text-slate-500 dark:text-slate-400 text-sm mt-1">Organiza y encuentra productos rápidamente</Text>
       </View>
+
+      <TouchableOpacity onPress={onExportPdf} disabled={isExporting} activeOpacity={0.8} className="flex-row items-center gap-2 bg-blue-600 active:bg-blue-700 px-4 py-2.5 rounded-2xl shadow-sm">
+        {isExporting ? <ActivityIndicator size="small" color="#ffffff" /> : <Ionicons name="document-text-outline" size={18} color="#ffffff" />}
+        <Text className="text-white font-bold text-xs">{isExporting ? 'Generando...' : 'Exportar PDF'}</Text>
+      </TouchableOpacity>
 
       <View className="relative">
         <View className="absolute left-3 top-3 z-10">

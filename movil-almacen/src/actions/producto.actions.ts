@@ -83,3 +83,68 @@ export const getProductosForRubro = async (rubroId: number, buscador: string): P
     return [];
   }
 };
+
+export interface RubroConProductos {
+  id_rubro: number;
+  nom_rubro: string;
+  productos: Producto[];
+}
+
+export const getProductosAgrupadosPorRubro = async (): Promise<RubroConProductos[]> => {
+  const db = await getDb();
+  try {
+    const filas = (await db.getAllAsync(
+      `SELECT 
+        p.id_producto,
+        p.descripcion,
+        p.codigo,
+        p.id_rubro,
+        p.precio,
+        p.stock,
+        p.imagen_local,
+        COALESCE(r.nom_rubro, 'Sin Categoría') as nom_rubro,
+        (SELECT json_group_array(
+          json_object(
+            'id_precio_mayorista', pm.id_precio_mayorista,
+            'id_articulo', pm.id_articulo,
+            'precio_mayorista', pm.precio_mayorista,
+            'cant_mayorista', pm.cant_mayorista
+          )
+        ) FROM precios_mayorista pm WHERE pm.id_articulo = p.id_producto) as precios_mayoristas
+      FROM productos p
+      LEFT JOIN rubros r ON r.id_rubro = p.id_rubro
+      ORDER BY r.nom_rubro ASC, p.descripcion ASC;`
+    )) as any[];
+
+    // Agrupamos los productos por su rubro
+    const gruposMap = new Map<string, RubroConProductos>();
+
+    filas.forEach((fila) => {
+      const nom_rubro = fila.nom_rubro || 'Sin Categoría';
+      if (!gruposMap.has(nom_rubro)) {
+        gruposMap.set(nom_rubro, {
+          id_rubro: fila.id_rubro || 0,
+          nom_rubro,
+          productos: [],
+        });
+      }
+
+      gruposMap.get(nom_rubro)!.productos.push({
+        id_producto: fila.id_producto,
+        codigo: fila.codigo || '',
+        descripcion: fila.descripcion,
+        id_rubro: fila.id_rubro,
+        precio: fila.precio,
+        stock: fila.stock,
+        imagen_local: fila.imagen_local || '',
+        precioAux: fila.precio,
+        precios_mayoristas: JSON.parse(fila.precios_mayoristas || '[]'),
+      });
+    });
+
+    return Array.from(gruposMap.values());
+  } catch (error) {
+    console.error('Error al obtener productos agrupados por rubro', error);
+    return [];
+  }
+};

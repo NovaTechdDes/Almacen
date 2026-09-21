@@ -17,19 +17,6 @@ export const setupDatabase = async () => {
 
   //Primero creamos la tabla de clientes ya que un pedido tiene que depender de un cliente
 
-  //Verificamos si existe la tabla email
-  try {
-    await conexion.execAsync(`ALTER TABLE clientes ADD COLUMN email TEXT`);
-  } catch (error) {
-    console.info('La columna email ya existe');
-  }
-
-  try {
-    await conexion.execAsync(`ALTER TABLE productos ADD COLUMN id_rubro INTEGER`);
-  } catch (error) {
-    console.info('La columna id_rubro ya existe');
-  }
-
   await conexion.execAsync(`
         CREATE TABLE IF NOT EXISTS clientes (
             id_cliente INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -52,8 +39,22 @@ export const setupDatabase = async () => {
             stock REAL NOT NULL,
             id_servidor INTEGER UNIQUE,
             imagen_local  TEXT,
+            id_rubro INTEGER,
             fecha_registro DATE DEFAULT CURRENT_DATE
         )`);
+
+  // Migraciones para tablas existentes creadas previamente sin estas columnas
+  try {
+    await conexion.execAsync(`ALTER TABLE clientes ADD COLUMN email TEXT`);
+  } catch (error) {
+    // La columna ya existe o la tabla ya la incluye
+  }
+
+  try {
+    await conexion.execAsync(`ALTER TABLE productos ADD COLUMN id_rubro INTEGER`);
+  } catch (error) {
+    // La columna ya existe o la tabla ya la incluye
+  }
 
   await conexion.execAsync(`
       CREATE TABLE IF NOT EXISTS precios_mayorista (
