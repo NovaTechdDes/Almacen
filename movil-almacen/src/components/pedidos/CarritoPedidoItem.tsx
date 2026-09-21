@@ -1,6 +1,7 @@
 import { ProductoCarrito } from '@/src/interface';
 import { usePedidoStore } from '@/src/store/pedido.store';
 import { mensaje } from '@/src/utils/mensaje';
+import { obtenerPrecioPorCantidad } from '@/src/utils/precios';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
@@ -11,18 +12,37 @@ interface CarritoPedidoItemProps {
 }
 
 const CarritoPedidoItem = ({ item }: CarritoPedidoItemProps) => {
-  const { removeItem, addItem, substractItem } = usePedidoStore();
+  const { removeItem, addItem, substractItem, updateItem } = usePedidoStore();
   const [show, setShow] = useState(false);
   const [cantidad, setCantidad] = useState('1');
+  const [precio, setPrecio] = useState('');
 
   const handleLongPress = () => {
+    setCantidad(item.cantidad.toString());
+    console.log(item.precioAux);
+    setPrecio(item.precioAux.toString());
     setShow(true);
   };
 
+  const handleCantidadChange = (nuevaCantidadStr: string) => {
+    setCantidad(nuevaCantidadStr);
+    const cantNum = parseFloat(nuevaCantidadStr) || 0;
+    console.log('a');
+    if (cantNum > 0) {
+      // Recalcula el precio al tramo mayorista correspondiente
+      const nuevoPrecio = obtenerPrecioPorCantidad(item.precio, item.precios_mayoristas, cantNum);
+      setPrecio(nuevoPrecio.toString());
+    }
+  };
+
   const handleConfirm = () => {
+    const cantNum = parseFloat(cantidad) || 1;
+    const precioNum = parseFloat(precio) || item.precioAux;
+
+    // Actualizamos el ítem en el carrito
+    updateItem(item.id_producto, cantNum, precioNum);
+
     mensaje('success', `Producto agregado al carrito con la cantidad: ${cantidad}`);
-    addItem(item, Number(cantidad));
-    setCantidad('1');
     setShow(false);
   };
 
@@ -105,8 +125,11 @@ const CarritoPedidoItem = ({ item }: CarritoPedidoItemProps) => {
       <ToastNumber
         visible={show}
         cantidad={cantidad}
-        setCantidad={setCantidad}
+        setCantidad={handleCantidadChange}
         onConfirm={handleConfirm}
+        precio={precio}
+        setPrecio={setPrecio}
+        precioSugerido={obtenerPrecioPorCantidad(item.precio, item.precios_mayoristas, parseFloat(cantidad) || 1)}
         onCancel={() => {
           setShow(false);
         }}

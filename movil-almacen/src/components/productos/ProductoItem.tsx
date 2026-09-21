@@ -1,8 +1,9 @@
 import { Producto } from '@/src/interface';
 import { usePedidoStore } from '@/src/store/pedido.store';
 import { mensaje } from '@/src/utils/mensaje';
+import { obtenerPrecioPorCantidad } from '@/src/utils/precios';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import ToastNumber from '../ui/ToastNumber';
 
@@ -14,6 +15,7 @@ export default function ProductoItem({ producto }: Props) {
   const { addItem } = usePedidoStore();
   const [show, setShow] = useState(false);
   const [cantidad, setCantidad] = useState('1');
+  const [precio, setPrecio] = useState<string>('');
 
   const handleAddCart = () => {
     mensaje('success', 'Producto agregado al carrito');
@@ -21,15 +23,39 @@ export default function ProductoItem({ producto }: Props) {
   };
 
   const handleLongPress = () => {
+    const cantidadInicial = 1;
+    setCantidad('1');
+
+    const precioCalculado = obtenerPrecioPorCantidad(producto.precio, producto.precios_mayoristas, cantidadInicial);
+    setPrecio(precioCalculado.toString());
+
     setShow(true);
   };
 
+  const handleCantidadChange = (nuevaCantidadStr: string) => {
+    setCantidad(nuevaCantidadStr);
+
+    const cantNum = parseFloat(nuevaCantidadStr) || 0;
+
+    if (cantNum > 0) {
+      const nuevoPrecio = obtenerPrecioPorCantidad(producto.precio, producto.precios_mayoristas, cantNum);
+      setPrecio(nuevoPrecio.toString());
+    }
+  };
+
   const handleConfirm = () => {
+    const cantNum = parseFloat(cantidad) || 1;
+    const precioNum = parseFloat(precio) || producto.precio;
+
+    addItem(producto, cantNum, precioNum);
+
     mensaje('success', `Producto agregado al carrito con la cantidad: ${cantidad}`);
-    addItem(producto, Number(cantidad));
-    setCantidad('1');
     setShow(false);
   };
+
+  useEffect(() => {
+    setPrecio(producto.precio?.toFixed(2) || '0.00');
+  }, [producto]);
 
   return (
     <View className="flex-1 rounded-3xl bg-white dark:bg-slate-900 border border-gray-500 dark:border-gray-800 shadow-sm overflow-hidden">
@@ -84,8 +110,12 @@ export default function ProductoItem({ producto }: Props) {
           {producto.precios_mayoristas?.map((precio, index) => (
             <View className="flex-row justify-between items-center flex-wrap gap-x-1" key={precio.id_precio_mayorista}>
               <View className="flex-row items-center gap-1 shrink">
-                <Text className="text-slate-400 text-xs sm:text-sm font-medium" adjustsFontSizeToFit numberOfLines={1}>May. {index + 1}</Text>
-                <Text className="text-slate-400 text-xs sm:text-sm font-medium" adjustsFontSizeToFit numberOfLines={1}>({precio.cant_mayorista}u)</Text>
+                <Text className="text-slate-400 text-xs sm:text-sm font-medium" adjustsFontSizeToFit numberOfLines={1}>
+                  May. {index + 1}
+                </Text>
+                <Text className="text-slate-400 text-xs sm:text-sm font-medium" adjustsFontSizeToFit numberOfLines={1}>
+                  ({precio.cant_mayorista}u)
+                </Text>
               </View>
               <Text className="text-emerald-600 font-semibold text-base sm:text-lg shrink" adjustsFontSizeToFit numberOfLines={1}>
                 $ {precio.precio_mayorista?.toFixed(2) || '0.00'}
@@ -97,7 +127,10 @@ export default function ProductoItem({ producto }: Props) {
       <ToastNumber
         visible={show}
         cantidad={cantidad}
-        setCantidad={setCantidad}
+        setCantidad={handleCantidadChange}
+        precio={precio.toString()}
+        setPrecio={setPrecio}
+        precioSugerido={obtenerPrecioPorCantidad(producto.precio, producto.precios_mayoristas, parseFloat(cantidad) || 1)}
         onConfirm={handleConfirm}
         onCancel={() => {
           setShow(false);

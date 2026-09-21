@@ -8,9 +8,13 @@ interface Props {
   onCancel: () => void;
   cantidad: string;
   setCantidad: (cantidad: string) => void;
+  precio?: string;
+  setPrecio?: (precioAux: string) => void;
+  precioSugerido?: number;
 }
 
-export default function ToastNumber({ visible, onConfirm, onCancel, cantidad, setCantidad }: Props) {
+export default function ToastNumber({ visible, onConfirm, onCancel, cantidad, setCantidad, precio, setPrecio, precioSugerido }: Props) {
+  console.log('Precio:', precio);
   const handleCantidadChange = (text: string) => {
     setCantidad(text);
   };
@@ -29,6 +33,7 @@ export default function ToastNumber({ visible, onConfirm, onCancel, cantidad, se
           </View>
 
           {/* Content */}
+
           <View className="px-8 pb-8 pt-2">
             <Text className="text-center text-lg font-bold text-slate-900 dark:text-white mb-2">¿Cuántas unidades deseas agregar?</Text>
             <TextInput
@@ -38,6 +43,21 @@ export default function ToastNumber({ visible, onConfirm, onCancel, cantidad, se
               className="border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-black dark:text-white"
             />
           </View>
+
+          {/* Precio */}
+          {precio !== undefined && setPrecio !== undefined && setPrecio && (
+            <View className="px-8 pb-8 pt-2">
+              <Text className="text-center text-lg font-bold text-slate-900 dark:text-white mb-2">Precio Unitario:</Text>
+              {precioSugerido !== undefined && <Text className="text-xs text-slate-400">Sugerido: ${precioSugerido.toFixed(2)}</Text>}
+              <TextInput
+                selectTextOnFocus
+                onChangeText={setPrecio}
+                value={precio}
+                keyboardType="numeric"
+                className="border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-black dark:text-white"
+              />
+            </View>
+          )}
 
           {/* Actions */}
           <View className="flex-row border-t border-slate-100 dark:border-slate-800">

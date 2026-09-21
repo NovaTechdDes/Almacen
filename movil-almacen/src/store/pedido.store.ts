@@ -6,7 +6,8 @@ export interface PedidoStore {
   toggleModal: () => void;
 
   items: ProductoCarrito[];
-  addItem: (producto: Producto | ProductoCarrito, cantidad?: number) => void;
+  addItem: (producto: Producto | ProductoCarrito, cantidad?: number, precioPersonalizado?: number) => void;
+  updateItem: (id_producto: number, cantidad: number, nuevoPrecio: number) => void;
   removeItem: (producto: ProductoCarrito) => void;
   substractItem: (producto: ProductoCarrito) => void;
 
@@ -25,24 +26,18 @@ export const usePedidoStore = create<PedidoStore>((set) => ({
   toggleModal: () => set((state) => ({ modalOpen: !state.modalOpen })),
 
   items: [],
-  addItem: (producto: Producto | ProductoCarrito, cantidad: number = 1) =>
+  addItem: (producto: Producto | ProductoCarrito, cantidad: number = 1, precioPersonalizado?: number) =>
     set((state) => {
       const productoCarrito = state.items.find((item) => item.id_producto === producto.id_producto);
       if (productoCarrito) {
-        const precio = productoCarrito.precios_mayoristas
-          ?.filter((pm) => pm.cant_mayorista && productoCarrito.cantidad + cantidad >= pm.cant_mayorista && pm.id_articulo === productoCarrito.id_producto)
+        const nuevaCantidad = productoCarrito.cantidad + cantidad;
+        const precioEscala = productoCarrito.precios_mayoristas
+          ?.filter((pm) => pm.cant_mayorista && nuevaCantidad >= pm.cant_mayorista && pm.id_articulo === productoCarrito.id_producto)
           .sort((a, b) => b.cant_mayorista - a.cant_mayorista)
           .at(0);
 
-        const updateItems = state.items.map((item) =>
-          item.id_producto === producto.id_producto
-            ? {
-                ...item,
-                precioAux: precio ? precio?.precio_mayorista : item.precio,
-                cantidad: item.cantidad + cantidad,
-              }
-            : item
-        );
+        const precioFinal = precioPersonalizado !== undefined ? precioPersonalizado : precioEscala ? precioEscala.precio_mayorista : productoCarrito.precio;
+        const updateItems = state.items.map((item) => (item.id_producto === producto.id_producto ? { ...item, precioAux: precioFinal, cantidad: nuevaCantidad } : item));
 
         const total = updateItems.reduce((acc, item) => acc + item.precioAux * item.cantidad, 0);
         return {
@@ -50,13 +45,39 @@ export const usePedidoStore = create<PedidoStore>((set) => ({
           total,
         };
       } else {
-        const updateItems = [...state.items, { ...producto, precioAux: producto.precio, cantidad }];
+        const precioEscala = producto.precios_mayoristas
+          ?.filter((pm) => pm.cant_mayorista && cantidad >= pm.cant_mayorista && pm.id_articulo === producto.id_producto)
+          .sort((a, b) => b.cant_mayorista - a.cant_mayorista)
+          .at(0);
+        const precioFinal = precioPersonalizado !== undefined ? precioPersonalizado : precioEscala ? precioEscala.precio_mayorista : producto.precio;
+
+        const updateItems = [...state.items, { ...producto, precioAux: precioFinal, cantidad }];
         const total = updateItems.reduce((acc, item) => acc + item.precioAux * item.cantidad, 0);
         return {
           items: updateItems,
           total,
         };
       }
+    }),
+  updateItem: (id_producto: number, cantidad: number, nuevoPrecio: number) =>
+    set((state) => {
+      const updateItems = state.items.map((item) => {
+        if (item.id_producto === id_producto) {
+          const precioFinal = nuevoPrecio !== undefined ? nuevoPrecio : item.precioAux;
+          return {
+            ...item,
+            cantidad: Math.max(1, cantidad),
+            precioAux: precioFinal,
+          };
+        }
+        return item;
+      });
+      const total = updateItems.reduce((acc, item) => acc + item.precioAux * item.cantidad, 0);
+
+      return {
+        items: updateItems,
+        total,
+      };
     }),
 
   removeItem: (producto: ProductoCarrito) =>
