@@ -19,7 +19,6 @@ const CarritoPedidoItem = ({ item }: CarritoPedidoItemProps) => {
 
   const handleLongPress = () => {
     setCantidad(item.cantidad.toString());
-    console.log(item.precioAux);
     setPrecio(item.precioAux.toString());
     setShow(true);
   };
@@ -27,7 +26,6 @@ const CarritoPedidoItem = ({ item }: CarritoPedidoItemProps) => {
   const handleCantidadChange = (nuevaCantidadStr: string) => {
     setCantidad(nuevaCantidadStr);
     const cantNum = parseFloat(nuevaCantidadStr) || 0;
-    console.log('a');
     if (cantNum > 0) {
       // Recalcula el precio al tramo mayorista correspondiente
       const nuevoPrecio = obtenerPrecioPorCantidad(item.precio, item.precios_mayoristas, cantNum);

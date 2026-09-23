@@ -4,12 +4,14 @@ import { pool } from './config/db';
 import { clienteRoutes, sincronizarRoutes } from './routes';
 import path from 'path';
 
+import { resolverCarpetaUploads } from './utils/obtenerDireccionImage';
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.use('/imagenes', express.static(path.join(process.cwd(), 'uploads')));
+app.use('/imagenes', express.static(resolverCarpetaUploads()));
 
 app.get('/test', async (_req, res) => {
   res.status(200).json({ ok: true, message: 'API funcionando correctamente' });

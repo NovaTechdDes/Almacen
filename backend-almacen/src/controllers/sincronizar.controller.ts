@@ -24,11 +24,15 @@ export const postSincronizar = async (req: Request, res: Response) => {
 
 export const getObtenerDatos = async (req: Request, res: Response) => {
   try {
-    const productos = await obtenerProductos();
-    const rubros = await obtnenerRubros();
+    const [productos, rubros] = await Promise.all([
+      obtenerProductos(), obtnenerRubros()
+    ])
+
     if (!productos) {
       return res.status(500).json({ error: 'Error al obtener los datos' });
-    }
+    };
+
+    
     res.status(200).json({
       ok: true,
       message: 'Datos obtenidos exitosamente',

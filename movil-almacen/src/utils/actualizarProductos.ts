@@ -1,46 +1,67 @@
 import { getDb } from '../db/db';
 
-export const actualizarProductos = async (productos: any[], rutas?: string[]) => {
+export const actualizarProductos = async (productos: any[]) => {
   try {
     const db = await getDb();
 
     await db.withTransactionAsync(async () => {
-      // 1. Limpiamos la tabla de precios mayoristas antes de insertar los nuevos.
-      // Lo hacemos dentro de la transacción para mantener la integridad.
+      // 1. Limpiamos los precios mayoristas viejos
       await db.runAsync(`DELETE FROM precios_mayorista`);
 
-      for (const producto of productos) {
-        const imagenLocal = rutas?.find((ruta) => ruta.includes(producto.codigo)) || '';
-
-        // 2. Insertamos o Actualizamos el producto (UPSERT)
-        // Usamos ON CONFLICT para que si el id_servidor ya existe, solo actualice los datos.
-        // RETURNING nos devuelve el id_producto local generado o existente.
-        await db.runAsync(
-          `INSERT INTO productos (descripcion, codigo, precio, id_rubro, stock, id_producto, imagen_local) 
-          VALUES (?, ?, ?, ?, ?, ?, ?) 
-          ON CONFLICT(id_producto) DO UPDATE SET 
+      // 2. Preparamos las sentencias SQL una sola vez para máxima velocidad
+      const stmtProducto = await db.prepareAsync(`
+        INSERT INTO productos (descripcion, codigo, precio, id_rubro, stock, id_producto, imagen_local) 
+        VALUES (?, ?, ?, ?, ?, ?, ?) 
+        ON CONFLICT(id_producto) DO UPDATE SET 
           descripcion = excluded.descripcion,
           codigo = excluded.codigo,
           precio = excluded.precio,
           id_rubro = excluded.id_rubro,
           stock = excluded.stock,
           id_producto = excluded.id_producto,
-          imagen_local = excluded.imagen_local`,
+          -- Si ya teníamos una imagen local descargada (file://), la conservamos; si no, usamos la URL recibida
+          imagen_local = CASE 
+            WHEN productos.imagen_local LIKE 'file://%' THEN productos.imagen_local
+            WHEN excluded.imagen_local IS NOT NULL AND excluded.imagen_local != '' THEN excluded.imagen_local
+            ELSE productos.imagen_local
+          END
+      `);
 
-          [producto.descripcion, producto.codigo, producto.precio, producto.id_rubro, producto.stock, producto.id_articulo, imagenLocal]
-        );
+      const stmtPrecio = await db.prepareAsync(`
+        INSERT INTO precios_mayorista (id_articulo, precio_mayorista, cant_mayorista) 
+        VALUES (?, ?, ?)
+      `);
 
-        // 2️⃣ Obtenemos el id local por separado
-        const res = await db.getFirstAsync<{ id_producto: number }>(`SELECT id_producto FROM productos WHERE id_producto = ?`, [producto.id_articulo]);
+      try {
+        for (const producto of productos) {
+          const imagenAInsertar = producto.imagen_local || '';
 
-        const idLocalProducto = res?.id_producto;
+          // Ejecutamos la inserción usando la sentencia preparada (súper veloz)
+          await stmtProducto.executeAsync([
+            producto.descripcion,
+            producto.codigo,
+            producto.precio,
+            producto.id_rubro,
+            producto.stock,
+            producto.id_articulo,
+            imagenAInsertar,
+          ]);
 
-        if (idLocalProducto) {
-          // 3. Insertamos los precios mayoristas vinculados al ID local
-          for (const precio of producto?.precios_mayoristas) {
-            await db.runAsync(`INSERT INTO precios_mayorista (id_articulo, precio_mayorista, cant_mayorista) VALUES (?, ?, ?)`, [idLocalProducto, precio.precio_mayorista, precio.cant_mayorista]);
+          // Insertamos sus precios mayoristas usando directamente producto.id_articulo
+          if (producto.precios_mayoristas && producto.precios_mayoristas.length > 0) {
+            for (const precio of producto.precios_mayoristas) {
+              await stmtPrecio.executeAsync([
+                producto.id_articulo,
+                precio.precio_mayorista,
+                precio.cant_mayorista,
+              ]);
+            }
           }
         }
+      } finally {
+        // Liberamos las sentencias preparadas de memoria
+        await stmtProducto.finalizeAsync();
+        await stmtPrecio.finalizeAsync();
       }
     });
 

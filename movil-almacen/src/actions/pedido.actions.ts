@@ -45,13 +45,14 @@ export const startPostPedido = async (pedido: Pedido) => {
     const idPedido = res.lastInsertRowId;
 
     for (const item of pedido.items || []) {
+      const precioUnitario = item.precioAux !== undefined && item.precioAux !== null ? item.precioAux : item.precio;
       await db.runAsync(
         `
         INSERT INTO detalle_pedido 
         (id_pedido, id_producto, cantidad, precio)
         VALUES (?, ?, ?, ?)
         `,
-        [idPedido, item.id_producto, item.cantidad, item.precio]
+        [idPedido, item.id_producto, item.cantidad, precioUnitario]
       );
     }
 

@@ -28,6 +28,7 @@ export const obtenerCliente = async (id_movil: string) => {
 
 export const cargarClientes = async (transaction: any, clientes: ClienteMovil[]) => {
   try {
+    console.log(clientes);
     for (const cliente of clientes) {
       //Buscar si hay cliente con el mismo codigo, en el servidor es  id_movil
       //Si existe se tiene que actualizar cuando la denominacion sea igual y el id sea igual

@@ -60,28 +60,58 @@ interface HeaderProps {
 
 const HeaderList = ({ search, setSearch, isExporting, onExportPdf }: HeaderProps) => {
   return (
-    <View className="mt-6 mb-4">
-      <View className="mb-6">
-        <Text className="text-slate-900 dark:text-white text-3xl font-black tracking-tight">Categorías</Text>
-        <Text className="text-slate-500 dark:text-slate-400 text-sm mt-1">Organiza y encuentra productos rápidamente</Text>
+    <View className="pt-4 pb-2">
+      {/* Título y Acción de Exportar */}
+      <View className="flex-row items-center justify-between mb-4">
+        <View className="flex-1 pr-3">
+          <Text className="text-slate-900 dark:text-white text-3xl font-black tracking-tight">
+            Categorías
+          </Text>
+          <Text className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">
+            Organiza y encuentra productos rápidamente
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          onPress={onExportPdf}
+          disabled={isExporting}
+          activeOpacity={0.8}
+          className="flex-row items-center gap-1.5 bg-blue-600 active:bg-blue-700 px-3.5 py-2.5 rounded-2xl shadow-sm shadow-blue-500/20"
+        >
+          {isExporting ? (
+            <ActivityIndicator size="small" color="#ffffff" />
+          ) : (
+            <Ionicons name="document-text-outline" size={16} color="#ffffff" />
+          )}
+          <Text className="text-white font-semibold text-xs">
+            {isExporting ? 'Generando...' : 'Exportar PDF'}
+          </Text>
+        </TouchableOpacity>
       </View>
 
-      <TouchableOpacity onPress={onExportPdf} disabled={isExporting} activeOpacity={0.8} className="flex-row items-center gap-2 bg-blue-600 active:bg-blue-700 px-4 py-2.5 rounded-2xl shadow-sm">
-        {isExporting ? <ActivityIndicator size="small" color="#ffffff" /> : <Ionicons name="document-text-outline" size={18} color="#ffffff" />}
-        <Text className="text-white font-bold text-xs">{isExporting ? 'Generando...' : 'Exportar PDF'}</Text>
-      </TouchableOpacity>
-
-      <View className="relative">
-        <View className="absolute left-3 top-3 z-10">
-          <Ionicons name="search-outline" size={20} color="#94a3b8" />
+      {/* Buscador Moderno */}
+      <View className="relative justify-center mb-2">
+        <View className="absolute left-3.5 z-10">
+          <Ionicons name="search-outline" size={19} color="#94a3b8" />
         </View>
         <TextInput
-          className="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl py-3 pl-10 pr-4 text-slate-900 dark:text-white"
+          className="bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl py-3 pl-11 pr-10 text-slate-900 dark:text-white text-sm"
           placeholder="Buscar rubro..."
           placeholderTextColor="#94a3b8"
           value={search}
           onChangeText={setSearch}
+          returnKeyType="search"
+          clearButtonMode="while-editing"
         />
+        {search.length > 0 && (
+          <TouchableOpacity
+            onPress={() => setSearch('')}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            className="absolute right-3.5 p-1"
+          >
+            <Ionicons name="close-circle" size={18} color="#94a3b8" />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );

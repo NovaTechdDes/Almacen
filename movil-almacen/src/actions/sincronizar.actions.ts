@@ -8,7 +8,7 @@ import { productoMapper } from '../mappers/producto.mappers';
 import { rubroMapper } from '../mappers/rubros.mappers';
 import { actualizarProductos } from '../utils/actualizarProductos';
 import { actualizarRubros } from '../utils/actualizarRubros';
-import { descargarImagenes } from '../utils/descargarImagenes';
+import { descargarImagenesEnSegundoPlano } from '../utils/descargarImagenes';
 
 const getServerUrl = async () => {
   return await AsyncStorage.getItem('@server_url');
@@ -17,9 +17,9 @@ const getServerUrl = async () => {
 export const startPostSincronizar = async (): Promise<boolean> => {
   const db = await getDb();
   const url = await getServerUrl();
+
   try {
     const clientes = await db.getAllAsync(`SELECT * FROM clientes`);
-
     const clientesMapeados = clientes.map((cliente: any) => clienteMapperBackEnd(cliente));
 
     const pedidos = await db.getAllAsync(`${querysGetPedidos} WHERE estado = 'PENDIENTE'`);
@@ -31,24 +31,29 @@ export const startPostSincronizar = async (): Promise<boolean> => {
     });
 
     if (data.ok) {
-      // Actualizamos los estados de los pedidos que fueron procesados por el servidor
-      for (const pedido of data.data.pedidos) {
-        await db.runAsync(`UPDATE pedidos SET estado = 'SINCRONIZADO' WHERE id_pedido = ?`, pedido.num_pedido);
-      }
+      // 1. Actualización rápida de estados en SQLite dentro de UNA sola transacción
+      await db.withTransactionAsync(async () => {
+        for (const pedido of data.data.pedidos) {
+          await db.runAsync(`UPDATE pedidos SET estado = 'SINCRONIZADO' WHERE id_pedido = ?`, pedido.num_pedido);
+        }
 
-      // Sincronizamos los IDs de clientes (vincular cliente local con ID del servidor)
-      for (const cliente of data.data.clientes) {
-        await db.runAsync(`UPDATE clientes SET id_servidor = ? WHERE id_cliente = ?`, [cliente.id_servidor, cliente.id_cliente]);
-      }
+        for (const cliente of data.data.clientes) {
+          await db.runAsync(`UPDATE clientes SET id_servidor = ? WHERE id_cliente = ?`, [cliente.id_servidor, cliente.id_cliente]);
+        }
+      });
 
-      // Sincronizamos el catálogo completo de productos y sus precios mayoristas
-      // La función actualizarProductos ya maneja transacciones y lógica de UPSERT (Insert o Update)
-      const productos = data.data.productos.map((p: any) => productoMapper(p));
+      // 2. Mapeamos productos y rubros recibidos
+      const productos = data.data.productos.map((p: any) => productoMapper(p, url));
       const rubros = data.data.rubros.map((r: any) => rubroMapper(r));
-      const rutas = await descargarImagenes(productos);
-      await actualizarProductos(productos, rutas);
+
+      // 3. Guardamos datos en SQLite inmediatamente
+      await actualizarProductos(productos);
       await actualizarRubros(rubros);
 
+      // 4. Lanzamos la descarga de imágenes en SEGUNDO PLANO (sin await)
+      descargarImagenesEnSegundoPlano(productos);
+
+      // 5. Devolvemos éxito de inmediato para liberar la pantalla
       return true;
     }
     return false;
@@ -80,17 +85,23 @@ export const startObtenerInformacion = async () => {
     const { data } = await axios.get(`http://${url}/obtener-datos`);
 
     const rubros = data.data.rubros.map((rubro: any) => rubroMapper(rubro));
-    const productos = data.data.productos.map((producto: any) => productoMapper(producto));
+    const productos = data.data.productos.map((producto: any) => productoMapper(producto, url));
 
-    if (data.data.productos && data.data.productos.length > 0) {
-      const rutas = await descargarImagenes(productos);
-      await actualizarProductos(productos, rutas);
+    // 1. Guardamos productos y rubros en SQLite al instante
+    if (productos && productos.length > 0) {
+      await actualizarProductos(productos);
     }
 
-    if (data.data.rubros && data.data.rubros.length > 0) {
+    if (rubros && rubros.length > 0) {
       await actualizarRubros(rubros);
     }
 
+    // 2. Disparamos la descarga en SEGUNDO PLANO sin congelar la app
+    if (productos && productos.length > 0) {
+      descargarImagenesEnSegundoPlano(productos);
+    }
+
+    // 3. Devolvemos inmediatamente
     return data;
   } catch (error) {
     console.error(error);

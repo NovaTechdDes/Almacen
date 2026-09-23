@@ -33,5 +33,6 @@ export const clienteMapperBackEnd = (cliente: Cliente) => {
     ctacte: 'Habilitada',
     id_loc: 1,
     id_iva: 2,
+    id_servidor: cliente.id_servidor,
   };
 };

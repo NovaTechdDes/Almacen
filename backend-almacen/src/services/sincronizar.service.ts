@@ -11,22 +11,38 @@ export const sincronizar = async (data: any) => {
 
   let clientesSincronizados: ClienteMovil[] | Cliente[] = [];
   let pedidosSincronizados: PedidoMovil[] = [];
-  let rubrosSincronizados: Rubros[] = [];
+  let transaccionCompletada = false;
 
   const transaction = await pool.transaction();
 
   try {
     await transaction.begin();
-    if (pedidos && pedidos.length > 0) {
-      pedidosSincronizados = await cargarPedidos(transaction, pedidos, clientes);
-    }
-    const rubros = await obtnenerRubros();
-    const productos = await obtenerProductos();
 
+    // 1. Sincronizamos clientes nuevos si los hay
+    if(clientes && clientes.length > 0){
+      clientesSincronizados = await cargarClientes(transaction, clientes);
+    };
+
+    // 2. Insertamos pedidos pendientes
+    if (pedidos && pedidos.length > 0) {
+      pedidosSincronizados = await cargarPedidos(transaction, pedidos, clientesSincronizados.length > 0 ? clientesSincronizados : clientes);
+    };
+
+    // 3. Confirmamos las escrituras inmediatamente para liberar bloqueos en la base de datos
     await transaction.commit();
-    return { clientes: clientesSincronizados, pedidos: pedidosSincronizados, productos, rubros };
+    transaccionCompletada = true;
+    
+    
+    const [rubros, productos] = await Promise.all([
+      obtnenerRubros(),
+      obtenerProductos()
+    ]);
+
+    return { clientes: clientesSincronizados, pedidos: pedidosSincronizados, rubros, productos };
   } catch (error) {
-    await transaction.rollback();
+    if(!transaccionCompletada){
+      await transaction.rollback();
+    }
     console.error('Error al sincronizar', error);
     throw new Error('No se pudo completar la sincronizacion de datos');
   }

@@ -22,6 +22,7 @@ export default function TotalPedido() {
       fecha: new Date().toISOString(),
       estado: 'PENDIENTE',
     };
+
     const res = await postPedidoMutation.mutateAsync(pedido);
 
     if (res) {

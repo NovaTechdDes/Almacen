@@ -14,7 +14,6 @@ interface Props {
 }
 
 export default function ToastNumber({ visible, onConfirm, onCancel, cantidad, setCantidad, precio, setPrecio, precioSugerido }: Props) {
-  console.log('Precio:', precio);
   const handleCantidadChange = (text: string) => {
     setCantidad(text);
   };
