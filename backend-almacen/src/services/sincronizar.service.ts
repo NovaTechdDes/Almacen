@@ -33,12 +33,13 @@ export const sincronizar = async (data: any) => {
     transaccionCompletada = true;
     
     
-    const [rubros, productos] = await Promise.all([
+    const [rubros, productos, todosLosClientes] = await Promise.all([
       obtnenerRubros(),
-      obtenerProductos()
+      obtenerProductos(),
+      obtenerClientes()
     ]);
 
-    return { clientes: clientesSincronizados, pedidos: pedidosSincronizados, rubros, productos };
+    return { clientes: todosLosClientes, pedidos: pedidosSincronizados, rubros, productos };
   } catch (error) {
     if(!transaccionCompletada){
       await transaction.rollback();

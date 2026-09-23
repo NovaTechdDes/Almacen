@@ -14,6 +14,7 @@ interface ClienteBackEnd {
 
 export const clienteMapper = (cliente: ClienteBackEnd): Cliente => {
   return {
+    id_servidor: cliente.id_cliente,
     denominacion: cliente.denominacion,
     dni: cliente.documento,
     direccion: cliente.domicilio,

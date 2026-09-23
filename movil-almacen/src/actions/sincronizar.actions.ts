@@ -2,10 +2,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { getDb } from '../db/db';
 import { querysGetPedidos } from '../db/querys';
-import { clienteMapperBackEnd } from '../mappers/cliente.mappers';
+import { clienteMapper, clienteMapperBackEnd } from '../mappers/cliente.mappers';
 import { pedidoMapperBackEnd } from '../mappers/pedido.mappers';
 import { productoMapper } from '../mappers/producto.mappers';
 import { rubroMapper } from '../mappers/rubros.mappers';
+import { actualizarClientes } from '../utils/actualizarClientes';
 import { actualizarProductos } from '../utils/actualizarProductos';
 import { actualizarRubros } from '../utils/actualizarRubros';
 import { descargarImagenesEnSegundoPlano } from '../utils/descargarImagenes';
@@ -36,19 +37,17 @@ export const startPostSincronizar = async (): Promise<boolean> => {
         for (const pedido of data.data.pedidos) {
           await db.runAsync(`UPDATE pedidos SET estado = 'SINCRONIZADO' WHERE id_pedido = ?`, pedido.num_pedido);
         }
-
-        for (const cliente of data.data.clientes) {
-          await db.runAsync(`UPDATE clientes SET id_servidor = ? WHERE id_cliente = ?`, [cliente.id_servidor, cliente.id_cliente]);
-        }
       });
 
       // 2. Mapeamos productos y rubros recibidos
       const productos = data.data.productos.map((p: any) => productoMapper(p, url));
       const rubros = data.data.rubros.map((r: any) => rubroMapper(r));
+      const clientes = data.data.clientes ? data.data.clientes.map((c: any) => clienteMapper(c)) : [];
 
-      // 3. Guardamos datos en SQLite inmediatamente
-      await actualizarProductos(productos);
-      await actualizarRubros(rubros);
+      // 3. Guardamos clientes, productos y rubros en sql
+      if (clientes.length > 0) await actualizarClientes(clientes);
+      if (productos.length > 0) await actualizarProductos(productos);
+      if (rubros.length > 0) await actualizarRubros(rubros);
 
       // 4. Lanzamos la descarga de imágenes en SEGUNDO PLANO (sin await)
       descargarImagenesEnSegundoPlano(productos);
@@ -86,8 +85,14 @@ export const startObtenerInformacion = async () => {
 
     const rubros = data.data.rubros.map((rubro: any) => rubroMapper(rubro));
     const productos = data.data.productos.map((producto: any) => productoMapper(producto, url));
+    const clientes = data.data.clientes ? data.data.clientes.map((c: any) => clienteMapper(c)) : [];
 
     // 1. Guardamos productos y rubros en SQLite al instante
+
+    if (clientes && clientes.length > 0) {
+      await actualizarClientes(clientes);
+    }
+
     if (productos && productos.length > 0) {
       await actualizarProductos(productos);
     }

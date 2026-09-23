@@ -6,5 +6,5 @@ export interface Cliente {
   direccion: string;
   localidad?: string;
   email?: string;
-  id_servidor?: string;
+  id_servidor?: number;
 }

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { sincronizar } from '../services';
+import { obtenerClientes, sincronizar } from '../services';
 import { obtenerProductos } from '../services/producto.service';
 import { obtenerVendedores } from '../services/vendedor.service';
 import { obtnenerRubros } from '../services/rubro.service';
@@ -24,8 +24,8 @@ export const postSincronizar = async (req: Request, res: Response) => {
 
 export const getObtenerDatos = async (req: Request, res: Response) => {
   try {
-    const [productos, rubros] = await Promise.all([
-      obtenerProductos(), obtnenerRubros()
+    const [productos, rubros, clientes] = await Promise.all([
+      obtenerProductos(), obtnenerRubros(), obtenerClientes()
     ])
 
     if (!productos) {
@@ -36,7 +36,7 @@ export const getObtenerDatos = async (req: Request, res: Response) => {
     res.status(200).json({
       ok: true,
       message: 'Datos obtenidos exitosamente',
-      data: { productos, rubros },
+      data: { productos, rubros, clientes },
     });
   } catch (error) {
     console.error('Error al obtener los datos', error);
