@@ -120,60 +120,60 @@ export const generarHtmlCatalogo = async (rubros: RubroConProductos[]): Promise<
             color: #1e293b;
             margin: 0;
             padding: 0;
-            font-size: 11px;
-            line-height: 1.3;
+            font-size: 13px;
+            line-height: 1.4;
           }
           .header {
             border-bottom: 2px solid #2563eb;
-            padding-bottom: 8px;
-            margin-bottom: 16px;
+            padding-bottom: 10px;
+            margin-bottom: 18px;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
           }
           .header h1 {
             margin: 0;
-            font-size: 20px;
+            font-size: 24px;
             color: #0f172a;
             font-weight: 800;
             letter-spacing: -0.5px;
           }
           .header .subtitle {
             color: #64748b;
-            font-size: 11px;
-            margin-top: 3px;
+            font-size: 13px;
+            margin-top: 4px;
           }
           .header-meta {
             text-align: right;
-            font-size: 10px;
+            font-size: 12px;
             color: #475569;
           }
           .header-meta strong {
             color: #0f172a;
           }
           .rubro-section {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
             page-break-inside: auto;
           }
           .rubro-header {
             background-color: #f1f5f9;
             border-left: 4px solid #2563eb;
-            padding: 6px 10px;
+            padding: 8px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-radius: 3px;
-            margin-bottom: 6px;
+            border-radius: 4px;
+            margin-bottom: 8px;
             page-break-after: avoid;
           }
           .rubro-header h2 {
             margin: 0;
-            font-size: 12px;
+            font-size: 15px;
             font-weight: 700;
             color: #1e293b;
           }
           .rubro-count {
-            font-size: 10px;
+            font-size: 12px;
             color: #64748b;
             font-weight: 600;
           }
@@ -193,30 +193,30 @@ export const generarHtmlCatalogo = async (rubros: RubroConProductos[]): Promise<
             background-color: #f8fafc;
             color: #475569;
             font-weight: 700;
-            font-size: 9.5px;
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border-bottom: 1px solid #cbd5e1;
-            padding: 5px 6px;
+            padding: 7px 8px;
             text-align: left;
           }
           td {
-            padding: 5px 6px;
+            padding: 7px 8px;
             border-bottom: 1px solid #f1f5f9;
-            font-size: 10px;
+            font-size: 12px;
             vertical-align: middle;
           }
           tr:nth-child(even) {
             background-color: #fafafa;
           }
           .col-img {
-            width: 38px;
+            width: 42px;
             text-align: center;
-            padding: 3px 4px;
+            padding: 4px;
           }
           .prod-img {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             object-fit: cover;
             border-radius: 4px;
             border: 1px solid #e2e8f0;
@@ -224,15 +224,15 @@ export const generarHtmlCatalogo = async (rubros: RubroConProductos[]): Promise<
             margin: 0 auto;
           }
           .prod-img-placeholder {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 4px;
             background-color: #f1f5f9;
             color: #94a3b8;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 13px;
             margin: 0 auto;
           }
           .col-codigo {
@@ -263,18 +263,18 @@ export const generarHtmlCatalogo = async (rubros: RubroConProductos[]): Promise<
             background-color: #ecfdf5;
             color: #059669;
             border: 1px solid #a7f3d0;
-            border-radius: 3px;
-            padding: 1px 4px;
-            font-size: 8.5px;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 10.5px;
             font-weight: 600;
-            margin: 1px 2px 1px 0;
+            margin: 1px 3px 1px 0;
             white-space: nowrap;
           }
           .footer {
             margin-top: 24px;
             border-top: 1px solid #e2e8f0;
-            padding-top: 8px;
-            font-size: 9px;
+            padding-top: 10px;
+            font-size: 11px;
             color: #94a3b8;
             text-align: center;
           }

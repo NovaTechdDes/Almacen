@@ -23,7 +23,6 @@ export const obtenerProductos = async (): Promise<Articulos[]> => {
     `;
     const result = await pool.request().query(query);
 
-    //console.log(result.recordset);
     const articulosMap = new Map();
 
     for (const row of result.recordset) {
@@ -50,7 +49,6 @@ export const obtenerProductos = async (): Promise<Articulos[]> => {
     }
 
     const articulos = Array.from(articulosMap.values());
-    //console.log(articulos);
 
     const articulosConImagen = obtenerDireccionImage(articulos);
 

@@ -4,6 +4,8 @@ import { Cliente, Producto, ProductoCarrito } from '../interface';
 export interface PedidoStore {
   modalOpen: boolean;
   toggleModal: () => void;
+  openModal: () => void;
+  closeModal: () => void;
 
   items: ProductoCarrito[];
   addItem: (producto: Producto | ProductoCarrito, cantidad?: number, precioPersonalizado?: number) => void;
@@ -24,6 +26,8 @@ export interface PedidoStore {
 export const usePedidoStore = create<PedidoStore>((set) => ({
   modalOpen: false,
   toggleModal: () => set((state) => ({ modalOpen: !state.modalOpen })),
+  openModal: () => set({ modalOpen: true }),
+  closeModal: () => set({ modalOpen: false }),
 
   items: [],
   addItem: (producto: Producto | ProductoCarrito, cantidad: number = 1, precioPersonalizado?: number) =>
