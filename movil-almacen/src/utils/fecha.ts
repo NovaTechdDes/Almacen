@@ -15,7 +15,7 @@ export const fechaHora = (fecha: string) => {
 export const inicioDia = () => {
   const fecha = new Date();
 
-  const retorno = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), 0, 0, 0);
+  const retorno = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate() - 5, 0, 0, 0);
 
   return retorno.toISOString();
 };

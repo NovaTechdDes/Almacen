@@ -25,14 +25,14 @@ export const querysGetPedidos = `SELECT
               'precio', d.precio,
               'subtotal', d.cantidad * d.precio,
               'producto', json_object(
-                'id_producto', pr.id_producto,
-                'descripcion', pr.descripcion,
-                'codigo', pr.codigo
+                'id_producto', COALESCE(pr.id_producto, d.id_producto),
+                'descripcion',  COALESCE(pr.descripcion, 'Producto #' || d.id_producto),
+                'codigo',  COALESCE(pr.codigo, '')
               )
             )
           )
           FROM detalle_pedido d
-          JOIN productos pr ON pr.id_producto = d.id_producto
+          LEFT JOIN productos pr ON pr.id_producto = d.id_producto
           WHERE d.id_pedido = p.id_pedido
         ) as items
 

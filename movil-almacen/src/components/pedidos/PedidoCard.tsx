@@ -15,6 +15,7 @@ interface Props {
 export default function PedidoCard({ item }: Props) {
   const { deletePedidoMutation } = useMutatePedidos();
   const [showToast, setShowToast] = useState(false);
+  const [view, setView] = useState(false);
 
   const handleDelete = async () => {
     if (!item.id_pedido) return;
@@ -29,12 +30,16 @@ export default function PedidoCard({ item }: Props) {
     }
   };
 
+  const handleView = () => {
+    setView(!view);
+  };
+
   return (
-    <View className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm mb-4 border border-gray-400 dark:border-slate-700">
+    <Pressable onPress={handleView} className={`${view ? 'border-blue-500 border-2' : 'border-gray-400 dark:border-slate-700'} bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm mb-4 border`}>
       <View className="flex-row gap-5">
-        {/* Logo */}
-        <View className="rounded-full bg-[#7cc1f0] dark:bg-slate-700 p-2">
-          <Ionicons name="cart-outline" size={24} color="#205f8a" />
+        {/* Logo / Icono de pedido */}
+        <View className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/40 items-center justify-center border border-blue-100 dark:border-blue-900/50 shadow-sm">
+          <Ionicons name="receipt-outline" size={24} color="#2563eb" />
         </View>
 
         <View>
@@ -71,7 +76,7 @@ export default function PedidoCard({ item }: Props) {
         <View className="ml-auto flex-row items-center gap-2">
           <View className="gap-2 text-sm  px-2 py-1 rounded-full">
             <Text className="text-lg font-bold dark:text-slate-300">Total</Text>
-            <Text className="text-2xl font-bold text-blue-600 dark:text-blue-400">${item?.importe.toFixed(2)}</Text>
+            <Text className="text-2xl font-bold text-blue-600 dark:text-blue-400">${item?.importe.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</Text>
           </View>
 
           {item.estado === 'PENDIENTE' && (
@@ -88,14 +93,14 @@ export default function PedidoCard({ item }: Props) {
           <Text className="text-xl text-gray-500 dark:text-slate-400">{item?.items?.length || 0} Productos</Text>
         </View>
 
-        <View className="mt-5 flex-row gap-5">
-          {item?.items?.map((producto, index) => (
-            <ProductoPedidoCard key={`${producto.id_producto}-${index}`} item={producto} />
-          ))}
+        <View className="mt-5 flex-row flex-wrap gap-2">
+          {view
+            ? item?.items?.map((producto, index) => <ProductoPedidoCard key={`${producto.id_producto}-${index}`} item={producto} />)
+            : item?.items?.slice(0, 3).map((producto, index) => <ProductoPedidoCard key={`${producto.id_producto}-${index}`} item={producto} />)}
         </View>
       </View>
 
       {showToast && <ToastConfirmacion visible={showToast} mensaje="¿Estás seguro de eliminar este Pedido?" onConfirm={handleDelete} onCancel={() => setShowToast(false)} />}
-    </View>
+    </Pressable>
   );
 }
