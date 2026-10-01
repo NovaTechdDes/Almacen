@@ -29,9 +29,10 @@ export default function Pedido() {
 
   const handleUser = async (password: string) => {
     const user = await AsyncStorage.getItem('@user');
+    const userParseado = user ? JSON.parse(user) : {};
 
-    if (user) {
-      setUserActive(JSON.parse(user));
+    if (userParseado.password === password) {
+      setUserActive(userParseado);
       mensaje('success', 'Usuario logueado correctamente');
       setModalVisible(false);
     } else {
@@ -53,7 +54,7 @@ export default function Pedido() {
         router.replace('/(tabs)/sincronizar');
       }
     })();
-  }, []);
+  }, [router]);
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50 dark:bg-slate-900">

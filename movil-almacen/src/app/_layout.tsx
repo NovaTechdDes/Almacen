@@ -1,6 +1,7 @@
 import { Stack } from "expo-router";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { AppState, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -8,10 +9,13 @@ import Toast from "react-native-toast-message";
 import "../../global.css";
 import { getDb } from "../db/db";
 import { setupDatabase } from "../db/migration";
+import { useAppTheme } from "../hooks";
 
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
+  const { isDark } = useAppTheme();
+
   useEffect(() => {
     setupDatabase();
   }, []);
@@ -31,6 +35,7 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
+        <StatusBar style={isDark ? "light" : "dark"} />
         <View className="flex-1 items-stretch bg-gray-50 dark:bg-slate-950">
           <Stack
             screenOptions={{
