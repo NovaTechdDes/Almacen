@@ -15,7 +15,7 @@
 
 # Subir Actualizacion
 
-1. Ejecutar `eas update --channel preview --message ""`
+1. Ejecutar `eas update --channel preview --platform android --message ""`
 
 # Configurar Variables de entorno
 

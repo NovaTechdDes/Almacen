@@ -4,16 +4,21 @@ import ProductoItem from '@/src/components/productos/ProductoItem';
 import { useProductoForRubro } from '@/src/hooks/productos/useProductos';
 import { useProductoStore } from '@/src/store/producto.store';
 import { useLocalSearchParams } from 'expo-router';
-import React, { useState } from 'react';
-import { FlatList, RefreshControl, Text, View } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { FlatList, RefreshControl, Text, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ProductosPorRubro() {
+  const { width } = useWindowDimensions();
+
   const { rubroId } = useLocalSearchParams();
   const [refreshing, setRefreshing] = useState(false);
 
   const { buscador } = useProductoStore();
   const { data: productos, isLoading, error, isFetching, refetch } = useProductoForRubro(Number(rubroId), buscador);
+
+  const numColumns = width < 600 ? 2 : width < 900 ? 3 : 4;
+  const renderItem = useCallback(({ item }: { item: any }) => <ProductoItem producto={item} />, []);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -31,19 +36,24 @@ export default function ProductosPorRubro() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50 dark:bg-slate-950 p-5">
+    <SafeAreaView className="flex-1 bg-gray-50 dark:bg-slate-950 px-5" edges={['top']}>
       {error && <Text>Error al cargar productos</Text>}
 
       <FlatList
+        key={`productos-grid-${numColumns}`}
         data={productos}
         keyExtractor={(item) => item.codigo}
-        numColumns={3}
+        numColumns={numColumns}
         ListHeaderComponent={<HeaderProductos data={productos || []} />}
         contentContainerStyle={{ flexGrow: 1, gap: 16, paddingBottom: 20 }}
         columnWrapperStyle={{ gap: 16 }}
         ListEmptyComponent={<ListaEmpty buscador={buscador} data={productos || []} isLoading={isLoading} isFetching={isFetching} />}
-        renderItem={({ item }) => <ProductoItem producto={item} />}
+        renderItem={renderItem}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        removeClippedSubviews
+        maxToRenderPerBatch={8}
+        initialNumToRender={6}
+        windowSize={5}
       />
     </SafeAreaView>
   );

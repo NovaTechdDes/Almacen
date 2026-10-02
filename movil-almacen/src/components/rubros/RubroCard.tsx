@@ -106,7 +106,7 @@ export const RubroCard = ({ rubro, index }: Props) => {
               <Text className={`text-[10px] font-mono font-bold uppercase tracking-widest ${color.refText}`}>REF-{rubro.id_rubro.toString().padStart(3, '0')}</Text>
             </View>
             <View className={`h-10 w-5 mt-2 rounded-full `}>
-              <Text className={`text-sm font-bold uppercase tracking-widest ${color.refText}`}>{rubro.cantidad_productos}</Text>
+              <Text className={`text-sm font-bold uppercase  ${color.refText}`}>{rubro.cantidad_productos}</Text>
             </View>
           </View>
 

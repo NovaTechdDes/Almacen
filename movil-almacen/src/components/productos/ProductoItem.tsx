@@ -11,7 +11,7 @@ interface Props {
   producto: Producto;
 }
 
-export default function ProductoItem({ producto }: Props) {
+const ProductoItem = React.memo(function ProductoItem({ producto }: Props) {
   const { addItem } = usePedidoStore();
   const [show, setShow] = useState(false);
   const [cantidad, setCantidad] = useState('1');
@@ -58,72 +58,86 @@ export default function ProductoItem({ producto }: Props) {
   }, [producto]);
 
   return (
-    <View className="flex-1 rounded-3xl bg-white dark:bg-slate-900 border border-gray-500 dark:border-gray-800 shadow-sm overflow-hidden">
-      {/* Parte Superior: Imagen y Badges */}
-      <TouchableOpacity onLongPress={handleLongPress} onPress={handleAddCart} className="h-44 w-full bg-slate-100 dark:bg-slate-800 items-center justify-center relative">
+    <View
+      className="flex-1 bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800"
+      style={{ elevation: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8 }}
+    >
+      {/* Imagen con badges superpuestos */}
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onLongPress={handleLongPress}
+        onPress={handleAddCart}
+        className="h-44 bg-slate-50 dark:bg-slate-800 items-center justify-center p-3"
+      >
         {producto.imagen_local ? (
           <Image className="h-full w-full" resizeMode="contain" source={{ uri: producto.imagen_local }} />
         ) : (
           <View className="items-center justify-center opacity-20">
-            <Ionicons name="image-outline" size={64} color="#94a3b8" />
-            <Text className="text-slate-400 text-xs font-bold mt-2">SIN IMAGEN</Text>
+            <Ionicons name="cube-outline" size={52} color="#64748b" />
           </View>
         )}
 
-        {/* Badge de Stock */}
-        <View className="absolute top-3 left-3 bg-blue-600 px-3 py-1 rounded-full">
-          <Text className="text-white text-xs font-bold">Stock: {producto.stock}</Text>
+        {/* Stock — top left */}
+        <View className="absolute top-2 left-2 bg-slate-900/70 px-2.5 py-0.5 rounded-full">
+          <Text className="text-white text-[10px] font-semibold">Stock: {producto.stock}</Text>
         </View>
+
+        {/* Rubro — top right */}
+        {producto.rubro?.nom_rubro && (
+          <View className="absolute top-2 right-2 bg-indigo-500/90 px-2.5 py-0.5 rounded-full max-w-[55%]">
+            <Text className="text-white text-[10px] font-bold uppercase tracking-wide" numberOfLines={1}>
+              {producto.rubro.nom_rubro}
+            </Text>
+          </View>
+        )}
       </TouchableOpacity>
 
-      {/* Parte Inferior: Información */}
-      <View className="p-4 gap-2">
-        {/* Código y Meta */}
-        <View className="flex-row items-center gap-2 justify-between">
-          <View className="flex-row gap-2">
-            <Ionicons name="barcode-outline" size={14} color="#94a3b8" />
-            <Text className="text-xs text-slate-900 dark:text-white font-medium uppercase tracking-wider" numberOfLines={1}>
-              {producto.codigo}
-            </Text>
-          </View>
-          <View className="bg-blue-500 p-2 rounded-full text-white text-xl">
-            <Text className=" text-white font-medium uppercase tracking-wider" numberOfLines={1}>
-              {producto.rubro?.nom_rubro}
-            </Text>
-          </View>
-        </View>
+      {/* Contenido */}
+      <View className="px-3 pt-2.5 pb-3 gap-2">
+        {/* Código */}
+        <Text className="text-[10px] font-mono text-slate-400 dark:text-slate-500" numberOfLines={1}>
+          #{producto.codigo}
+        </Text>
 
         {/* Descripción */}
-        <Text className="text-lg font-bold text-slate-900 dark:text-white leading-tight h-12" numberOfLines={2}>
+        <Text className="text-sm font-bold text-slate-800 dark:text-white leading-snug min-h-[40px]" numberOfLines={2}>
           {producto.descripcion}
         </Text>
 
         {/* Precios */}
-        <View className="mt-2 pt-2 border-t border-slate-50 dark:border-slate-800 gap-1">
-          {/* Unitario */}
-          <View className="flex-row justify-between items-center">
-            <Text className="text-slate-500 text-sm">Unitario</Text>
-            <Text className="text-blue-600 font-bold text-md">$ {producto.precio?.toFixed(2) || 0}</Text>
+        <View className="pt-2.5 border-t border-slate-100 dark:border-slate-800 gap-1">
+          <View className="flex-row justify-between items-baseline">
+            <Text className="text-[11px] text-slate-400">Unitario</Text>
+            <Text className="text-base font-extrabold text-slate-900 dark:text-white">
+              ${producto.precio?.toFixed(2) || '0.00'}
+            </Text>
           </View>
 
-          {/* Mayoristas */}
-          {producto.precios_mayoristas?.map((precio, index) => (
-            <View className="flex-row justify-between items-center flex-wrap gap-x-1" key={precio.id_precio_mayorista}>
-              <View className="flex-row items-center gap-1 shrink">
-                <Text className="text-slate-400 text-xs sm:text-sm font-medium" adjustsFontSizeToFit numberOfLines={1}>
-                  May. {index + 1}
-                </Text>
-                <Text className="text-slate-400 text-xs sm:text-sm font-medium" adjustsFontSizeToFit numberOfLines={1}>
-                  ({precio.cant_mayorista}u)
-                </Text>
+          {producto.precios_mayoristas?.map((pm, index) => (
+            <View key={pm.id_precio_mayorista || index} className="flex-row justify-between items-center">
+              <View className="flex-row items-center gap-1">
+                <View className="w-1 h-1 rounded-full bg-emerald-400" />
+                <Text className="text-[10px] text-slate-400 dark:text-slate-500">x{pm.cant_mayorista}u</Text>
               </View>
-              <Text className="text-emerald-600 font-semibold text-base sm:text-lg shrink" adjustsFontSizeToFit numberOfLines={1}>
-                $ {precio.precio_mayorista?.toFixed(2) || '0.00'}
+              <Text className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                ${pm.precio_mayorista?.toFixed(2) || '0.00'}
               </Text>
             </View>
           ))}
         </View>
       </View>
+
+      {/* Botón agregar */}
+      <TouchableOpacity
+        onPress={handleAddCart}
+        onLongPress={handleLongPress}
+        activeOpacity={0.8}
+        className="mx-3 mb-3 bg-indigo-600 rounded-xl py-2.5 flex-row items-center justify-center gap-2"
+      >
+        <Ionicons name="cart-outline" size={15} color="#ffffff" />
+        <Text className="text-white text-xs font-bold tracking-widest">AGREGAR</Text>
+      </TouchableOpacity>
+
       <ToastNumber
         visible={show}
         cantidad={cantidad}
@@ -138,4 +152,6 @@ export default function ProductoItem({ producto }: Props) {
       />
     </View>
   );
-}
+});
+
+export default ProductoItem;

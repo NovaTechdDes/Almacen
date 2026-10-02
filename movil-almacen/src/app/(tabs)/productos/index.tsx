@@ -5,15 +5,18 @@ import { Rubro } from '@/src/interface';
 import { exportarCatalogoPdf } from '@/src/utils/generarHtmlCatalogo';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { ActivityIndicator, FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function RubrosScreen() {
+  const { width } = useWindowDimensions();
   const { data: rubros, isLoading, error } = useRubros();
   const [search, setSearch] = useState('');
   const [isExporting, setIsExporting] = useState(false);
 
   const filteredRubros = rubros?.filter((r) => r.nom_rubro.toLowerCase().includes(search.toLowerCase()));
+
+  const numColumns = width < 600 ? 2 : width < 900 ? 3 : 400;
 
   const handleExportPdf = async () => {
     if (isExporting) return;
@@ -39,11 +42,12 @@ export default function RubrosScreen() {
     <SafeAreaView className="flex-1 bg-white dark:bg-slate-950">
       <FlatList
         data={filteredRubros}
+        key={`grid-${numColumns}`}
         ListHeaderComponent={<HeaderList isExporting={isExporting} onExportPdf={handleExportPdf} search={search} setSearch={setSearch} />}
         renderItem={({ item, index }: { item: Rubro; index: number }) => <RubroCard rubro={item} index={index} />}
         keyExtractor={(item: Rubro) => item.id_rubro.toString()}
-        numColumns={3}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
+        numColumns={numColumns}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 0 }}
         columnWrapperStyle={{ gap: 8 }}
         showsVerticalScrollIndicator={false}
       />
@@ -64,12 +68,8 @@ const HeaderList = ({ search, setSearch, isExporting, onExportPdf }: HeaderProps
       {/* Título y Acción de Exportar */}
       <View className="flex-row items-center justify-between mb-4">
         <View className="flex-1 pr-3">
-          <Text className="text-slate-900 dark:text-white text-3xl font-black tracking-tight">
-            Categorías
-          </Text>
-          <Text className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">
-            Organiza y encuentra productos rápidamente
-          </Text>
+          <Text className="text-slate-900 dark:text-white text-3xl font-black tracking-tight">Categorías</Text>
+          <Text className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">Organiza y encuentra productos rápidamente</Text>
         </View>
 
         <TouchableOpacity
@@ -78,14 +78,8 @@ const HeaderList = ({ search, setSearch, isExporting, onExportPdf }: HeaderProps
           activeOpacity={0.8}
           className="flex-row items-center gap-1.5 bg-blue-600 active:bg-blue-700 px-3.5 py-2.5 rounded-2xl shadow-sm shadow-blue-500/20"
         >
-          {isExporting ? (
-            <ActivityIndicator size="small" color="#ffffff" />
-          ) : (
-            <Ionicons name="document-text-outline" size={16} color="#ffffff" />
-          )}
-          <Text className="text-white font-semibold text-xs">
-            {isExporting ? 'Generando...' : 'Exportar PDF'}
-          </Text>
+          {isExporting ? <ActivityIndicator size="small" color="#ffffff" /> : <Ionicons name="document-text-outline" size={16} color="#ffffff" />}
+          <Text className="text-white font-semibold text-xs">{isExporting ? 'Generando...' : 'Exportar PDF'}</Text>
         </TouchableOpacity>
       </View>
 
@@ -104,11 +98,7 @@ const HeaderList = ({ search, setSearch, isExporting, onExportPdf }: HeaderProps
           clearButtonMode="while-editing"
         />
         {search.length > 0 && (
-          <TouchableOpacity
-            onPress={() => setSearch('')}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            className="absolute right-3.5 p-1"
-          >
+          <TouchableOpacity onPress={() => setSearch('')} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} className="absolute right-3.5 p-1">
             <Ionicons name="close-circle" size={18} color="#94a3b8" />
           </TouchableOpacity>
         )}
