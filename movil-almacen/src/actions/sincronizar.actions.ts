@@ -20,7 +20,7 @@ export const startPostSincronizar = async (): Promise<boolean> => {
   const url = await getServerUrl();
 
   try {
-    const clientes = await db.getAllAsync(`SELECT * FROM clientes`);
+    const clientes = await db.getAllAsync(`SELECT * FROM clientes WHERE id_servidor IS NULL`);
     const clientesMapeados = clientes.map((cliente: any) => clienteMapperBackEnd(cliente));
 
     const pedidos = await db.getAllAsync(`${querysGetPedidos} WHERE estado = 'PENDIENTE'`);

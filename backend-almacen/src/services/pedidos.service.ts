@@ -6,22 +6,32 @@ export const cargarPedidos = async (transaction: any, pedidos: PedidoMovil[], cl
   try {
     for (const pedido of pedidos) {
       
-      // 1. Obtener o registrarel cliente si no existe
-      let cliente = await obtenerCliente(`${pedido.id_cliente}-${pedido.vendedor}`);
-      
-      if (!cliente) {
-        const clienteTraido = clientesTablet.find((c) => c.id_cliente === pedido.id_cliente);
-        if (clienteTraido) {
-          cliente = await cargarCliente(clienteTraido as ClienteMovil, pedido.vendedor);
+      // 1. Resolver el id del cliente en el servidor
+      let idClienteServidor: number | undefined | null = pedido.id_cliente_servidor;
+
+      if (!idClienteServidor) {
+        // Cliente creado en el movil: buscarlo por id_movil o registrarlo
+        let cliente = await obtenerCliente(`${pedido.id_cliente}-${pedido.vendedor}`, transaction);
+
+        if (cliente) {
+          idClienteServidor = cliente.id_cliente;
+        } else {
+          const clienteTraido = clientesTablet.find((c) => c.id_cliente === pedido.id_cliente);
+          if (clienteTraido) {
+            cliente = await cargarCliente(clienteTraido as ClienteMovil, pedido.vendedor, transaction);
+            idClienteServidor = cliente?.id_servidor;
+          }
         }
-      } else {
-        cliente.id_servidor = cliente.id_cliente;
+      }
+
+      if (!idClienteServidor) {
+        throw new Error(`No se pudo determinar el cliente del pedido ${pedido.num_pedido}`);
       }
 
       // 2. Insertar cabecera del pedido
       const result = await transaction
         .request()
-        .input('id_cliente', cliente?.id_servidor)
+        .input('id_cliente', idClienteServidor)
         .input('vendedor', pedido.vendedor)
         .input('num_pedido', pedido.num_pedido)
         .input('fecha_pedido', pedido.fecha_pedido).query(`

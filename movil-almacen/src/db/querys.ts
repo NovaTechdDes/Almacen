@@ -1,6 +1,7 @@
 export const querysGetPedidos = `SELECT 
         p.id_pedido,
         p.id_cliente,
+        c.id_servidor AS id_cliente_servidor,
         p.fecha,
         p.importe,
         p.estado,

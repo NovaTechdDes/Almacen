@@ -4,12 +4,12 @@ import React from "react";
 import { FlatList, Text, View } from "react-native";
 import CarritoPedidoItem from "./CarritoPedidoItem";
 
-export default function CarritoPedido() {
+export default function CarritoPedido({ compact = false }: { compact?: boolean }) {
   const { items } = usePedidoStore();
 
   return (
     <View className="flex-1">
-      <View className="flex-row items-center justify-between mb-6">
+      <View className={`flex-row items-center justify-between ${compact ? 'mb-3' : 'mb-6'}`}>
         <View className="flex-row items-center">
           <Ionicons name="cart-outline" size={24} color="#334155" />
           <Text className="text-xl font-bold text-slate-700 dark:text-slate-200 ml-2">
@@ -26,7 +26,8 @@ export default function CarritoPedido() {
         )}
 
         keyExtractor={(item) => item.id_producto.toString()}
-        contentContainerStyle={{ gap: 12, paddingBottom: 20 }}
+        contentContainerStyle={{ gap: compact ? 8 : 12, paddingBottom: 20 }}
+        ListEmptyComponent={<Text className="text-center text-slate-400 mt-8">El carrito está vacío</Text>}
         showsVerticalScrollIndicator={false}
       />
 

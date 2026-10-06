@@ -7,9 +7,10 @@ import ToastNumber from '../ui/ToastNumber';
 
 interface Props {
   producto: Producto;
+  compact?: boolean;
 }
 
-export default function PedidoItem({ producto }: Props) {
+export default function PedidoItem({ producto, compact = false }: Props) {
   const { addItem } = usePedidoStore();
   const [cantidad, setCantidad] = useState('1');
   const [show, setShow] = useState(false);
@@ -35,17 +36,21 @@ export default function PedidoItem({ producto }: Props) {
         opacity: pressed ? 0.9 : 1,
         transform: [{ scale: pressed ? 0.98 : 1 }],
       })}
-      className="flex-1 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-3xl p-4 flex-row items-center shadow-sm shadow-slate-200 dark:shadow-none"
+      className={`flex-1 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 ${compact ? 'rounded-2xl p-3' : 'rounded-3xl p-4'} flex-row items-center shadow-sm shadow-slate-200 dark:shadow-none`}
     >
       {({ pressed }) => (
         <>
           {/* Miniatura de Producto */}
-          <View className="h-20 w-20 bg-slate-50 dark:bg-slate-700 rounded-2xl items-center justify-center mr-4">
-            {producto.imagen_local ? <Image source={{ uri: producto.imagen_local }} className="h-20 w-20 rounded-2xl" /> : <Ionicons name="cube-outline" size={32} color="#94a3b8" />}
+          <View className={`${compact ? 'h-14 w-14 mr-3' : 'h-20 w-20 mr-4'} bg-slate-50 dark:bg-slate-700 rounded-2xl items-center justify-center`}>
+            {producto.imagen_local ? (
+              <Image source={{ uri: producto.imagen_local }} className={`${compact ? 'h-14 w-14' : 'h-20 w-20'} rounded-2xl`} />
+            ) : (
+              <Ionicons name="cube-outline" size={compact ? 24 : 32} color="#94a3b8" />
+            )}
           </View>
 
           <View className="flex-1">
-            <Text numberOfLines={1} className="text-slate-800 dark:text-slate-200 font-bold text-sm mb-1">
+            <Text numberOfLines={2} className="text-slate-800 dark:text-slate-200 font-bold text-sm mb-1">
               {producto.descripcion}
             </Text>
             <Text className="text-slate-400 text-[10px] mb-2">Marca Genérica</Text>

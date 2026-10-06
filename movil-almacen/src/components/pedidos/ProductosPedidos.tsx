@@ -7,7 +7,12 @@ import { FlatList, TextInput, View } from "react-native";
 import Loading from "../ui/Loading";
 import PedidoItem from "./PedidoItem";
 
-export default function ProductosPedidos() {
+interface Props {
+  numColumns?: number;
+  compact?: boolean;
+}
+
+export default function ProductosPedidos({ numColumns = 2, compact = false }: Props) {
   const [productos, setProductos] = useState<Producto[]>([]);
   const { buscador, setBuscador } = useProductoStore();
   const [offset, setOffset] = useState(0);
@@ -41,7 +46,7 @@ export default function ProductosPedidos() {
   return (
     <View className="flex-1">
       {/* Buscador */}
-      <View className="flex-row items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 mb-6 shadow-sm shadow-slate-200 dark:shadow-none">
+      <View className={`flex-row items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 ${compact ? 'py-2 mb-3' : 'py-3 mb-6'} shadow-sm shadow-slate-200 dark:shadow-none`}>
         <Ionicons name="search" size={20} color="#94a3b8" />
         <TextInput
           value={buscador}
@@ -58,11 +63,17 @@ export default function ProductosPedidos() {
       ) : (
         <FlatList
           data={productos}
-          renderItem={({ item }) => <PedidoItem producto={item} />}
+          key={numColumns}
+          renderItem={({ item }) => (
+            <View style={numColumns > 1 ? { flex: 1 / numColumns } : undefined}>
+              <PedidoItem producto={item} compact={compact} />
+            </View>
+          )}
           keyExtractor={(item) => item.id_producto.toString()}
-          numColumns={2}
-          columnWrapperStyle={{ gap: 16 }}
-          contentContainerStyle={{ gap: 16, paddingBottom: 20 }}
+          numColumns={numColumns}
+          columnWrapperStyle={numColumns > 1 ? { gap: compact ? 10 : 16 } : undefined}
+          contentContainerStyle={{ gap: compact ? 10 : 16, paddingBottom: 20 }}
+          keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           onEndReached={cargarMas}
           onEndReachedThreshold={0.5}

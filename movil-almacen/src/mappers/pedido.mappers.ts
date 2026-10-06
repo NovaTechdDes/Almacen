@@ -9,6 +9,7 @@ export const pedidoMapperBackEnd = async (pedido: Pedido) => {
     num_pedido: pedido.id_pedido,
     fecha_pedido: pedido.fecha,
     id_cliente: pedido.id_cliente,
+    id_cliente_servidor: pedido.id_cliente_servidor ?? null,
     vendedor: `${vendedor}`,
     facturado: false,
 

@@ -1,13 +1,17 @@
-import { useClienteStore } from "@/src/store/cliente.store";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
+import { useClienteStore } from "../../store/cliente.store";
 
 export default function HeaderCliente() {
-  const { openModalFormulario } = useClienteStore();
+  const router = useRouter();
+
+  const { setClienteSeleccionado } = useClienteStore();
 
   const handleOpen = () => {
-    openModalFormulario();
+    setClienteSeleccionado(null); // formulario en blanco
+    router.push("/clientes/nuevo");
   };
 
   return (

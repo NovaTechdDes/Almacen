@@ -14,11 +14,11 @@ export const obtenerClientes = async () => {
   }
 };
 
-export const obtenerCliente = async (id_movil: string) => {
+export const obtenerCliente = async (id_movil: string, transaction?: any) => {
   try {
-    const query = `SELECT * FROM clientes WHERE id_movil = '${id_movil}'`;
+    const query = `SELECT * FROM clientes WHERE id_movil = @id_movil`;
 
-    const result = await pool.request().query(query);
+    const result = await (transaction ?? pool).request().input('id_movil', id_movil).query(query);
     return result.recordset[0] as Cliente;
   } catch (error) {
     console.error('Error al obtener el cliente', error);
@@ -80,9 +80,9 @@ export const cargarClientes = async (transaction: any, clientes: ClienteMovil[])
   }
 };
 
-export const cargarCliente = async (cliente: ClienteMovil, vendedor?: string) => {
+export const cargarCliente = async (cliente: ClienteMovil, vendedor?: string, transaction?: any) => {
   try {
-    const result = await pool
+    const result = await (transaction ?? pool)
       .request()
       .input('denominacion', cliente.denominacion)
       .input('tipo_doc', cliente.tipo_doc)

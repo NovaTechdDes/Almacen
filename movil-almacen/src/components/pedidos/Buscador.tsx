@@ -7,10 +7,14 @@ export default function Buscador() {
   const { toggleModal } = usePedidoStore();
 
   return (
-    <View className="flex-row gap-3 w-[50%] items-center">
-      <View className="flex-row items-center bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded-lg flex-1 border-gray-200 dark:border-slate-700 border">
+    <View className="flex-row gap-3 items-center">
+      <View className="flex-row items-center bg-white dark:bg-slate-800 px-3 py-2 rounded-xl flex-1 border-slate-200 dark:border-slate-700 border">
         <Ionicons name="search" size={20} color="#64748b" />
-        <TextInput placeholder="Buscar pedido" placeholderTextColor={"#64748b"} className="flex-1 text-sm dark:text-white" />
+        <TextInput
+          placeholder="Buscar pedido"
+          placeholderTextColor={"#64748b"}
+          className="flex-1 ml-2 text-sm dark:text-white"
+        />
       </View>
 
       <Pressable
@@ -19,7 +23,7 @@ export default function Buscador() {
           opacity: pressed ? 0.8 : 1,
           transform: [{ scale: pressed ? 0.95 : 1 }],
         })}
-        className="bg-blue-600 p-3 rounded-xl flex-row items-center gap-2 shadow-lg"
+        className="bg-blue-600 px-4 py-3 rounded-xl flex-row items-center gap-1 shadow-lg"
       >
         <Ionicons name="add" size={22} color="white" />
         <Text className="text-white font-semibold">Nuevo Pedido</Text>

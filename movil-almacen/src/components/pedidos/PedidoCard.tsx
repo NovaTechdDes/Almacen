@@ -12,10 +12,17 @@ interface Props {
   item: Pedido;
 }
 
+const MAX_VISIBLES = 3;
+
 export default function PedidoCard({ item }: Props) {
   const { deletePedidoMutation } = useMutatePedidos();
   const [showToast, setShowToast] = useState(false);
   const [view, setView] = useState(false);
+
+  const pendiente = item?.estado === 'PENDIENTE';
+  const items = item?.items ?? [];
+  const ocultos = Math.max(items.length - MAX_VISIBLES, 0);
+  const visibles = view ? items : items.slice(0, MAX_VISIBLES);
 
   const handleDelete = async () => {
     if (!item.id_pedido) return;
@@ -30,73 +37,68 @@ export default function PedidoCard({ item }: Props) {
     }
   };
 
-  const handleView = () => {
-    setView(!view);
-  };
-
   return (
-    <Pressable onPress={handleView} className={`${view ? 'border-blue-500 border-2' : 'border-gray-400 dark:border-slate-700'} bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm mb-4 border`}>
-      <View className="flex-row gap-5">
-        {/* Logo / Icono de pedido */}
-        <View className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/40 items-center justify-center border border-blue-100 dark:border-blue-900/50 shadow-sm">
-          <Ionicons name="receipt-outline" size={24} color="#2563eb" />
+    <Pressable
+      onPress={() => setView(!view)}
+      className={`${view ? 'border-blue-500' : 'border-slate-200 dark:border-slate-700'} bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm shadow-slate-200 dark:shadow-none border`}
+    >
+      {/* Cabecera: icono, número, estado y acciones */}
+      <View className="flex-row items-center gap-3">
+        <View className="w-11 h-11 rounded-2xl bg-blue-50 dark:bg-blue-950/40 items-center justify-center border border-blue-100 dark:border-blue-900/50">
+          <Ionicons name="receipt-outline" size={22} color="#2563eb" />
         </View>
 
-        <View>
-          {/* Numero de pedido y estado */}
-          <View className="flex-row gap-2">
-            <Text className="text-lg font-bold dark:text-white">Pedido: {item?.id_pedido?.toString().padStart(4, '0')}</Text>
-            {item?.estado === 'PENDIENTE' ? (
-              <View className="flex-row items-center gap-2 text-sm bg-orange-300/20 px-2 py-1 rounded-full">
-                <Ionicons name="time-outline" size={16} color="#ea580c" />
-                <Text className=" text-orange-600">{item?.estado}</Text>
-              </View>
-            ) : (
-              <View className="flex-row items-center gap-2 text-sm bg-green-300/20 px-2 py-1 rounded-full">
-                <Ionicons name="checkmark-outline" size={16} color="#16a34a" />
-                <Text className=" text-green-600">{item?.estado}</Text>
-              </View>
-            )}
-          </View>
-
-          {/* Cliente y fecha */}
-          <View className="flex-row gap-5 mt-2">
-            <View className="flex-row items-center gap-2 text-sm  px-2 py-1 rounded-full">
-              <Ionicons name="person-outline" size={16} color="gray" />
-              <Text className="text-gray-500">{item?.cliente?.denominacion}</Text>
-            </View>
-            <View className="flex-row items-center gap-2 text-sm  px-2 py-1 rounded-full">
-              <Ionicons name="calendar-outline" size={16} color="gray" />
-              <Text className="text-gray-500">{fechaHora(item?.fecha)}</Text>
-            </View>
+        <View className="flex-1">
+          <Text className="text-lg font-bold text-slate-900 dark:text-white">Pedido #{item?.id_pedido?.toString().padStart(4, '0')}</Text>
+          <View className={`self-start flex-row items-center gap-1 px-2 py-0.5 rounded-full mt-1 ${pendiente ? 'bg-orange-300/20' : 'bg-green-300/20'}`}>
+            <Ionicons name={pendiente ? 'time-outline' : 'checkmark-outline'} size={14} color={pendiente ? '#ea580c' : '#16a34a'} />
+            <Text className={`text-xs font-semibold ${pendiente ? 'text-orange-600' : 'text-green-600'}`}>{item?.estado}</Text>
           </View>
         </View>
 
-        {/* Total */}
-        <View className="ml-auto flex-row items-center gap-2">
-          <View className="gap-2 text-sm  px-2 py-1 rounded-full">
-            <Text className="text-lg font-bold dark:text-slate-300">Total</Text>
-            <Text className="text-2xl font-bold text-blue-600 dark:text-blue-400">${item?.importe.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</Text>
-          </View>
+        {pendiente && (
+          <Pressable onPress={() => setShowToast(true)} hitSlop={8} className="p-2 rounded-full bg-red-50 dark:bg-red-950/30">
+            <Ionicons name="trash-outline" size={20} color="#ef4444" />
+          </Pressable>
+        )}
+      </View>
 
-          {item.estado === 'PENDIENTE' && (
-            <Pressable onPress={() => setShowToast(true)} className="ml-auto">
-              <Ionicons name="trash-outline" size={24} color="red" />
-            </Pressable>
-          )}
+      {/* Cliente y fecha */}
+      <View className="mt-3 gap-1">
+        <View className="flex-row items-center gap-2">
+          <Ionicons name="person-outline" size={16} color="#94a3b8" />
+          <Text numberOfLines={1} className="flex-1 text-slate-600 dark:text-slate-300">
+            {item?.cliente?.denominacion}
+          </Text>
+        </View>
+        <View className="flex-row items-center gap-2">
+          <Ionicons name="calendar-outline" size={16} color="#94a3b8" />
+          <Text className="text-slate-500 dark:text-slate-400 text-sm">{fechaHora(item?.fecha)}</Text>
         </View>
       </View>
 
       {/* Productos */}
-      <View className="border-t border-gray-500 dark:border-slate-700 mt-5 pt-5">
-        <View>
-          <Text className="text-xl text-gray-500 dark:text-slate-400">{item?.items?.length || 0} Productos</Text>
+      <View className="border-t border-slate-100 dark:border-slate-700 mt-3 pt-3">
+        <View className="flex-row flex-wrap gap-2">
+          {visibles.map((producto, index) => (
+            <ProductoPedidoCard key={`${producto.id_producto}-${index}`} item={producto} />
+          ))}
+          {!view && ocultos > 0 && (
+            <View className="px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/40">
+              <Text className="text-sm font-semibold text-blue-600 dark:text-blue-300">+{ocultos} más</Text>
+            </View>
+          )}
         </View>
+      </View>
 
-        <View className="mt-5 flex-row flex-wrap gap-2">
-          {view
-            ? item?.items?.map((producto, index) => <ProductoPedidoCard key={`${producto.id_producto}-${index}`} item={producto} />)
-            : item?.items?.slice(0, 3).map((producto, index) => <ProductoPedidoCard key={`${producto.id_producto}-${index}`} item={producto} />)}
+      {/* Pie: cantidad de productos y total */}
+      <View className="flex-row items-end justify-between mt-3">
+        <Text className="text-slate-500 dark:text-slate-400">
+          {items.length} {items.length === 1 ? 'producto' : 'productos'}
+        </Text>
+        <View className="items-end">
+          <Text className="text-xs text-slate-500 dark:text-slate-400">Total</Text>
+          <Text className="text-2xl font-extrabold text-blue-600 dark:text-blue-400">${(item?.importe ?? 0).toLocaleString('es-AR', { minimumFractionDigits: 2 })}</Text>
         </View>
       </View>
 

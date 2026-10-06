@@ -1,13 +1,18 @@
 import { usePedidos } from "@/src/hooks/pedidos/usePedidos";
 import { useMutateSincronizar } from "@/src/hooks/sincronizar/useMutateSincronizar";
 import { mensaje } from "@/src/utils/mensaje";
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, useWindowDimensions, View } from "react-native";
 import Buscador from "./Buscador";
 
 export default function HeaderPedidos() {
+  const { width } = useWindowDimensions();
   const { postSincronizar } = useMutateSincronizar();
   const { data: pedidos } = usePedidos(new Date().toISOString().split("T")[0]);
+
+  // En pantallas anchas todo va en una sola fila; en angostas se apila
+  const wide = width >= 900;
 
   const handleSincronizar = async () => {
     const res = await postSincronizar.mutateAsync();
@@ -18,27 +23,33 @@ export default function HeaderPedidos() {
     }
   };
 
+  const total = pedidos?.length ?? 0;
+
   return (
-    <View className="bg-white dark:bg-slate-900 py-10 px-5 flex-row justify-between transition-colors">
-      <View className="mb-5 flex-row justify-between gap-5">
-        <View>
-          <Text className="text-4xl font-bold text-slate-900 dark:text-white">Pedidos</Text>
-          <Text className="text-gray-500 dark:text-slate-400">
-            {pedidos?.length} pedidos registrados
+    <View className={`pb-4 ${wide ? "pt-6 flex-row items-center justify-between gap-6" : "pt-4 gap-4"}`}>
+      <View className="flex-row items-center justify-between gap-4">
+        <View className="flex-shrink">
+          <Text className="text-3xl font-bold text-slate-900 dark:text-white">Pedidos</Text>
+          <Text className="text-slate-500 dark:text-slate-400">
+            {total} {total === 1 ? "pedido registrado" : "pedidos registrados"}
           </Text>
         </View>
 
         <Pressable
           onPress={handleSincronizar}
-          className={`bg-blue-500 px-5 py-2 rounded-lg items-center justify-center ${postSincronizar.isPending ? "opacity-50" : ""}`}
+          disabled={postSincronizar.isPending}
+          className={`bg-blue-500 px-4 py-2.5 rounded-xl flex-row items-center gap-2 ${postSincronizar.isPending ? "opacity-50" : ""}`}
         >
-          <Text className="text-white">
+          <Ionicons name="sync-outline" size={18} color="white" />
+          <Text className="text-white font-semibold">
             {postSincronizar.isPending ? "Sincronizando..." : "Sincronizar"}
           </Text>
         </Pressable>
       </View>
 
-      <Buscador />
+      <View className={wide ? "flex-1 max-w-[560px]" : ""}>
+        <Buscador />
+      </View>
     </View>
   );
 }

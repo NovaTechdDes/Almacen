@@ -18,7 +18,7 @@ export const ClienteCard: React.FC<Props> = ({ cliente }) => {
   const router = useRouter();
 
   const { eliminarCliente } = useMutateCliente();
-  const { setClienteSeleccionado, openModalFormulario } = useClienteStore();
+  const { setClienteSeleccionado } = useClienteStore();
   const { setCliente, openModal } = usePedidoStore();
 
   const isSincronizado = !!cliente.id_servidor;
@@ -82,7 +82,7 @@ export const ClienteCard: React.FC<Props> = ({ cliente }) => {
   // --- 3. Edición y Eliminación ---
   const handleEdit = () => {
     setClienteSeleccionado(cliente);
-    openModalFormulario();
+    router.push('/clientes/nuevo');
   };
 
   const handleDelete = async () => {
