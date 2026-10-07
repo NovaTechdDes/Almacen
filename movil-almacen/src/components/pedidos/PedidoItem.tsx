@@ -36,7 +36,7 @@ export default function PedidoItem({ producto, compact = false }: Props) {
         opacity: pressed ? 0.9 : 1,
         transform: [{ scale: pressed ? 0.98 : 1 }],
       })}
-      className={`flex-1 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 ${compact ? 'rounded-2xl p-3' : 'rounded-3xl p-4'} flex-row items-center shadow-sm shadow-slate-200 dark:shadow-none`}
+      className={`bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 ${compact ? 'rounded-2xl p-3' : 'rounded-3xl p-4'} flex-row items-center shadow-sm shadow-slate-200 dark:shadow-none`}
     >
       {({ pressed }) => (
         <>

@@ -1,8 +1,7 @@
-import { useProductos } from "@/src/hooks/productos/useProductos";
-import { Producto } from "@/src/interface";
+import { useProductoInfinito } from "@/src/hooks/productos/useProductos";
 import { useProductoStore } from "@/src/store/producto.store";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
+import React, { useMemo } from "react";
 import { FlatList, TextInput, View } from "react-native";
 import Loading from "../ui/Loading";
 import PedidoItem from "./PedidoItem";
@@ -12,36 +11,25 @@ interface Props {
   compact?: boolean;
 }
 
+const LIMIT = 20;
+
 export default function ProductosPedidos({ numColumns = 2, compact = false }: Props) {
-  const [productos, setProductos] = useState<Producto[]>([]);
   const { buscador, setBuscador } = useProductoStore();
-  const [offset, setOffset] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
 
-  const limit = 20;
-  const { data, isLoading } = useProductos(buscador, limit, offset, 0);
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } = useProductoInfinito(buscador, LIMIT, 0);
+
+  const productos = useMemo(() => {
+    const vistos = new Set<number>();
+    return (data?.pages.flat() ?? []).filter((p) => {
+      if (vistos.has(p.id_producto)) return false;
+      vistos.add(p.id_producto);
+      return true;
+    })
+  }, [data]);
+
   const cargarMas = () => {
-    if (isLoading || !hasMore) return;
-
-    setOffset((prev) => prev + limit);
+    if (hasNextPage && !isFetchingNextPage) fetchNextPage();
   };
-
-    useEffect(() => {
-      if (!data) return;
-  
-      if (offset === 0) {
-        setProductos(data); // primera carga o búsqueda nueva
-        setHasMore(data.length === limit);
-      } else {
-        setProductos((prev) => [...prev, ...data]); // paginación
-        setHasMore(data.length === limit);
-      }
-    }, [data, offset]);
-
-      useEffect(() => {
-        setOffset(0);
-        setHasMore(true);
-      }, [buscador]);
 
   return (
     <View className="flex-1">
@@ -77,7 +65,7 @@ export default function ProductosPedidos({ numColumns = 2, compact = false }: Pr
           showsVerticalScrollIndicator={false}
           onEndReached={cargarMas}
           onEndReachedThreshold={0.5}
-          ListFooterComponent={ isLoading && productos.length > 0 ? <Loading texto="Cargando más productos..." /> : null}
+          ListFooterComponent={isLoading && productos.length > 0 ? <Loading texto="Cargando más productos..." /> : null}
         />
       )}
     </View>

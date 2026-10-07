@@ -16,7 +16,7 @@ export default function RubrosScreen() {
 
   const filteredRubros = rubros?.filter((r) => r.nom_rubro.toLowerCase().includes(search.toLowerCase()));
 
-  const numColumns = width < 600 ? 2 : width < 900 ? 3 : 400;
+  const numColumns = width < 600 ? 2 : width < 900 ? 3 : 4;
 
   const handleExportPdf = async () => {
     if (isExporting) return;

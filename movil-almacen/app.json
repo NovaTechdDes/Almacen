@@ -2,8 +2,10 @@
   "expo": {
     "name": "Maranatha-movil",
     "slug": "maranatha-movil",
-    "platforms": ["android"],
-    "version": "3.3.4",
+    "platforms": [
+      "android"
+    ],
+    "version": "3.3.6",
     "orientation": "default",
     "icon": "./assets/icons/adaptive-icon.png",
     "scheme": "maranathamovil",
